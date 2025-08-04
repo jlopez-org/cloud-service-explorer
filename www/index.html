@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Cloud Service Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Neutrals -->
+    <!-- Application Structure Plan: The application now uses a two-view structure: a filterable card-based main view and a full-page detail view for comparisons. This approach provides a clear, linear user flow. The initial view acts as a high-level explorer, and clicking a card's "Read More" button transitions the user to a dedicated, rich-content page. This new page is better suited for displaying detailed technical information and external links, which would be cumbersome in a small modal. A prominent 'Back' button ensures easy navigation back to the main service list. The comparison page is further refined with sub-sections for Key Differences, Ecosystem & Integrations, Pricing & Billing, and Common Use Cases to improve scannability and user understanding. -->
+    <!-- Visualization & Content Choices: The core data is still presented in interactive cards, but the technical comparison is now a rich, structured textual view with sub-categories. Goal: Inform and provide detailed context. Presentation: A new dedicated HTML section with a main heading, a descriptive paragraph, and multiple bulleted lists for the four comparison categories. Interaction: A button click triggers a state change in the application, switching from the main card view to the detail view, and vice versa. Justification: This full-page approach avoids the limitations of a modal (space, readability) and creates a more focused, informative experience for the user. The sub-categories directly address the need for a more granular comparison. Library/Method: Vanilla JavaScript handles all view transitions and dynamic content rendering. Tailwind CSS is used for all styling. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+        .filter-btn.active {
+            background-color: #3b82f6;
+            color: white;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+        }
+        .card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+        <div id="main-view">
+            <header class="text-center mb-8">
+                <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">Cloud Service Explorer</h1>
+                <p class="text-md text-slate-600 max-w-3xl mx-auto">
+                    An interactive guide to the cloud service landscape. Use the filters and search bar below to compare equivalent services across Amazon Web Services (AWS), Microsoft Azure, and Google Cloud Platform (GCP).
+                </p>
+            </header>
+
+            <div class="controls bg-white p-4 rounded-xl shadow-sm mb-8 sticky top-4 z-10">
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <div class="relative flex-grow">
+                        <input type="text" id="search-input" placeholder="Search services (e.g., EC2, SQL, Storage...)" class="w-full p-3 pl-10 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                        <svg class="w-5 h-5 text-slate-400 absolute top-1/2 left-3 -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                        </svg>
+                    </div>
+                </div>
+                <div id="category-filters" class="mt-4 flex flex-wrap gap-2">
+                </div>
+            </div>
+
+            <main id="services-container" class="card-grid">
+            </main>
+
+            <div id="no-results" class="hidden text-center py-16">
+                <h3 class="text-2xl font-semibold text-slate-700">No Services Found</h3>
+                <p class="text-slate-500 mt-2">Try adjusting your search or filter criteria.</p>
+            </div>
+        </div>
+
+        <!-- Full-page Comparison View -->
+        <div id="comparison-view" class="hidden">
+            <button id="back-button" class="inline-flex items-center text-blue-600 hover:text-blue-800 transition mb-6">
+                <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                </svg>
+                Back to Services
+            </button>
+            <div class="bg-white p-6 sm:p-8 rounded-xl shadow-md border border-slate-200">
+                <h2 id="comparison-title" class="text-3xl font-bold text-slate-900 mb-2"></h2>
+                <p id="comparison-summary" class="text-lg text-slate-600 mb-6"></p>
+
+                <div id="comparison-details" class="space-y-6">
+                </div>
+
+                <h3 class="text-xl font-semibold text-slate-800 mt-8 mb-3">Official Documentation</h3>
+                <div id="documentation-links" class="flex flex-col sm:flex-row gap-4">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const servicesData = [
+            { 
+                category: 'Compute', 
+                subCategory: 'Virtual Machines', 
+                aws: 'Amazon EC2 (Elastic Compute Cloud)', 
+                azure: 'Azure Virtual Machines', 
+                gcp: 'Google Compute Engine (GCE)',
+                comparison: {
+                    summary: 'All three providers offer virtual machines, but they differ in features, billing models, and the degree of integration with their own ecosystems.',
+                    key_differences: [
+                        '<i>GCP</i> offers live migration of running VMs between hosts, allowing for proactive infrastructure maintenance without service disruption.',
+                        '<i>AWS</i> offers a broader range of specialized instance types (e.g., Graviton-based, GPU-optimized) and has a more mature market presence.',
+                        '<i>Azure</i> has strong ties to Microsoft enterprise tools and a wide array of Windows-specific configurations.'
+                    ],
+                    ecosystem_integrations: [
+                        '<i>AWS</i> has the largest ecosystem with the most mature tools and third-party integrations.',
+                        '<i>Azure</i> offers deep integration with Microsoft software and enterprise services, such as Active Directory and System Center.',
+                        '<i>GCP</i> integrates natively with open-source tools and is known for its strong integration with data and machine learning services.'
+                    ],
+                    pricing_billing: [
+                        '<i>GCP</i> provides per-second billing, which can be more cost-effective for short-duration workloads compared to AWS and Azure\'s per-minute models.',
+                        'All three offer various pricing models including On-Demand, Reserved Instances (AWS)/Committed Use Discounts (GCP), and Spot instances for significant cost savings.'
+                    ],
+                    common_use_cases: [
+                        'General-purpose computing, web servers, and application hosting.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/ec2/',
+                        azure: 'https://azure.microsoft.com/en-us/services/virtual-machines/',
+                        gcp: 'https://cloud.google.com/compute/'
+                    }
+                }
+            },
+            { 
+                category: 'Compute', 
+                subCategory: 'Serverless Functions', 
+                aws: 'AWS Lambda', 
+                azure: 'Azure Functions', 
+                gcp: 'Cloud Functions',
+                comparison: {
+                    summary: 'These services all provide a function-as-a-service model, running code in response to events without managing servers, but they differ in runtime support and ecosystem integration.',
+                    key_differences: [
+                        '<i>AWS</i> Lambda is the most mature service with a vast ecosystem of integrations and a wide array of supported runtimes.',
+                        '<i>Azure</i> Functions is deeply integrated with the Microsoft ecosystem and offers a powerful development experience, particularly for .NET developers.',
+                        '<i>GCP</i> Cloud Functions is known for its simplicity and fast cold-start times, making it excellent for event-driven architectures on the GCP platform.'
+                    ],
+                    ecosystem_integrations: [
+                        '<i>AWS</i> Lambda triggers are available for most AWS services, enabling event-driven architectures at scale.',
+                        '<i>Azure</i> Functions integrates with Azure Event Grid, Azure Cosmos DB, and other Azure services.',
+                        '<i>GCP</i> Cloud Functions integrates with Firebase and other GCP services, and also has an HTTP trigger for web hooks.'
+                    ],
+                    pricing_billing: [
+                        'All three services typically have a free tier and are billed based on the number of requests and the duration of execution, often in milliseconds.',
+                        'Pricing is highly granular and scales automatically with usage, making them very cost-effective for intermittent workloads.'
+                    ],
+                    common_use_cases: [
+                        'Event-driven applications, API backends, real-time data processing, and simple automation tasks.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/lambda/',
+                        azure: 'https://azure.microsoft.com/en-us/services/functions/',
+                        gcp: 'https://cloud.google.com/functions/'
+                    }
+                }
+            },
+            { 
+                category: 'Compute', 
+                subCategory: 'Container Orchestration', 
+                aws: 'Amazon ECS & EKS', 
+                azure: 'Azure Container Apps & AKS', 
+                gcp: 'Cloud Run & GKE',
+                comparison: {
+                    summary: 'While all platforms offer managed Kubernetes, they also provide alternatives for simpler container management, each with its own advantages.',
+                    key_differences: [
+                        '<i>GKE</i> is often considered the most native and mature managed Kubernetes service, benefiting from Google\'s experience with Kubernetes.',
+                        '<i>AWS</i> offers EKS for Kubernetes, but also ECS as a highly-integrated, proprietary alternative for simpler container deployments.',
+                        '<i>Azure</i> provides AKS with strong integration into Azure services and a serverless option via Azure Container Apps for hosting containers without managing Kubernetes.'
+                    ],
+                    ecosystem_integrations: [
+                        '<i>AWS</i> container services integrate with Amazon ECR for image management and CloudWatch for monitoring.',
+                        '<i>Azure</i> AKS integrates with Azure Container Registry for image storage and Azure Monitor for performance tracking.',
+                        '<i>GCP</i> GKE integrates with Cloud Build for CI/CD and Artifact Registry for image management.'
+                    ],
+                    pricing_billing: [
+                        'Pricing varies significantly based on the service. Managed Kubernetes services often charge for control plane management, while serverless options like Cloud Run and Azure Container Apps are typically billed based on usage (requests and compute time).'
+                    ],
+                    common_use_cases: [
+                        'Microservices architectures, containerized applications, and high-scale web services.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/eks/',
+                        azure: 'https://azure.microsoft.com/en-us/services/kubernetes-service/',
+                        gcp: 'https://cloud.google.com/kubernetes-engine/'
+                    }
+                }
+            },
+            { 
+                category: 'Compute', 
+                subCategory: 'Application Hosting', 
+                aws: 'AWS Elastic Beanstalk', 
+                azure: 'Azure App Service', 
+                gcp: 'Google App Engine',
+                comparison: {
+                    summary: 'These PaaS offerings abstract infrastructure management, allowing developers to focus purely on their code. They are excellent for quickly deploying web apps and APIs.',
+                    key_differences: [
+                        '<i>Azure</i> App Service is highly popular with developers using the Microsoft stack and integrates seamlessly with other Azure services.',
+                        '<i>GCP</i> App Engine is known for its ease of use with Python and Java, offering a robust, fully managed environment.',
+                        '<i>AWS</i> Elastic Beanstalk provides a more open and customizable PaaS experience, allowing for more control over the underlying EC2 instances and resources.'
+                    ],
+                    ecosystem_integrations: [
+                        '<i>AWS</i> Elastic Beanstalk integrates with a variety of AWS services for logging, monitoring, and database management.',
+                        '<i>Azure</i> App Service integrates deeply with Azure Active Directory for authentication and Azure DevOps for CI/CD pipelines.',
+                        '<i>GCP</i> App Engine is tightly integrated with Google Cloud\'s developer tools and services like Cloud Datastore.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is based on the underlying compute resources consumed (e.g., virtual machine sizes and instances), often with a separate cost for network traffic and other services used.',
+                        'Billing is typically on a per-minute or per-hour basis, similar to standard virtual machines.'
+                    ],
+                    common_use_cases: [
+                        'Web applications, APIs, and mobile backends.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/elasticbeanstalk/',
+                        azure: 'https://azure.microsoft.com/en-us/services/app-service/',
+                        gcp: 'https://cloud.google.com/appengine/'
+                    }
+                }
+            },
+            { 
+                category: 'Storage', 
+                subCategory: 'Object Storage', 
+                aws: 'Amazon S3 (Simple Storage Service)', 
+                azure: 'Azure Blob Storage', 
+                gcp: 'Google Cloud Storage',
+                comparison: {
+                    summary: 'These services provide highly scalable and durable object storage for unstructured data. They are foundational for data lakes, static websites, and backups.',
+                    key_differences: [
+                        '<i>AWS</i> S3 is the market leader with a vast ecosystem, mature APIs, and a wide array of features like versioning and lifecycle policies.',
+                        '<i>Azure</i> Blob Storage offers strong integration with Azure services and different access tiers optimized for cost and access frequency.',
+                        '<i>GCP</i> Cloud Storage offers a unified model where different access tiers are managed within the same service, with high performance and low latency.'
+                    ],
+                    ecosystem_integrations: [
+                        'All three services are deeply integrated with their respective data processing, AI/ML, and content delivery network (CDN) services.',
+                        'They act as the foundational storage layer for many other cloud services, including data lakes and backups.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is based on a combination of factors: the amount of data stored (per GB), data retrieval (egress), and the number of operations (PUT, GET, etc.).',
+                        'Storage costs vary by access tier (Standard, Infrequent Access, Archive), with archive tiers having the lowest storage cost but high retrieval fees.'
+                    ],
+                    common_use_cases: [
+                        'Data lakes, static website hosting, backups, and media storage.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/s3/',
+                        azure: 'https://azure.microsoft.com/en-us/services/storage/blobs/',
+                        gcp: 'https://cloud.google.com/storage/'
+                    }
+                }
+            },
+            { 
+                category: 'Storage', 
+                subCategory: 'Block Storage', 
+                aws: 'Amazon EBS (Elastic Block Store)', 
+                azure: 'Azure Managed Disks', 
+                gcp: 'Google Persistent Disk',
+                comparison: {
+                    summary: 'These services provide persistent, block-level storage volumes for virtual machines, acting like a physical hard drive. They are crucial for OS boot volumes and database storage.',
+                    key_differences: [
+                        'All three offer various volume types optimized for different performance needs (e.g., SSD for high I/O, HDD for general purpose).',
+                        'They are all tightly integrated with their respective VM services, offering options for encryption, snapshots, and resizing.'
+                    ],
+                    ecosystem_integrations: [
+                        'These services are essential for their respective virtual machine offerings (EC2, Virtual Machines, Compute Engine) and are often the primary storage for stateful applications and databases.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is primarily based on the volume size (GB/month) and the number of provisioned IOPS (I/O operations per second), as well as any snapshot storage.',
+                        'Costs vary based on the performance tier you choose (e.g., General Purpose SSD vs. Provisioned IOPS SSD).'
+                    ],
+                    common_use_cases: [
+                        'Boot volumes for VMs, database storage, and high-performance application storage.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/ebs/',
+                        azure: 'https://azure.microsoft.com/en-us/services/managed-disks/',
+                        gcp: 'https://cloud.google.com/persistent-disk/'
+                    }
+                }
+            },
+            { 
+                category: 'Storage', 
+                subCategory: 'File Storage', 
+                aws: 'Amazon EFS (Elastic File System)', 
+                azure: 'Azure Files', 
+                gcp: 'Google Filestore',
+                comparison: {
+                    summary: 'These are managed file storage services for applications that need a shared file system. They are often used for web content management, media processing, and home directories.',
+                    key_differences: [
+                        '<i>AWS</i> EFS is known for its elastic scalability, automatically growing and shrinking as you add or remove files.',
+                        '<i>Azure</i> Files offers support for both SMB and NFS protocols, making it easier for traditional on-premises applications to migrate.',
+                        '<i>GCP</i> Filestore provides managed NFS file storage with different performance tiers on the GCP platform.'
+                    ],
+                    ecosystem_integrations: [
+                        'All three services are used for shared storage between multiple virtual machines and containers, and they are integrated with their respective networking and compute services.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is typically based on the amount of data stored (GB/month) and often includes a separate cost for network transfer.',
+                        'Costs may also differ based on the performance tier chosen, with higher-performance options costing more per gigabyte.'
+                    ],
+                    common_use_cases: [
+                        'Content management systems, shared home directories, and lift-and-shift of traditional file-based applications.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/efs/',
+                        azure: 'https://azure.microsoft.com/en-us/services/storage/files/',
+                        gcp: 'https://cloud.google.com/filestore/'
+                    }
+                }
+            },
+            { 
+                category: 'Storage', 
+                subCategory: 'Archival Storage', 
+                aws: 'Amazon S3 Glacier', 
+                azure: 'Azure Archive Storage', 
+                gcp: 'Google Cloud Storage Archive',
+                comparison: {
+                    summary: 'These services are optimized for long-term, low-cost data storage with infrequent access. They are primarily used for compliance, regulatory, and disaster recovery purposes.',
+                    key_differences: [
+                        'The main differences lie in their retrieval options, with varying retrieval times from minutes to hours, depending on the tier chosen.',
+                        '<i>AWS</i> S3 Glacier offers different retrieval options, from expedited (1-5 minutes) to standard and bulk.',
+                        '<i>Azure</i> Archive Storage provides a low-cost, offline storage option.',
+                        '<i>GCP</i> Cloud Storage Archive offers similar functionality as a storage class within the Cloud Storage service.'
+                    ],
+                    ecosystem_integrations: [
+                        'These services are integrated with their respective object storage and backup services for data lifecycle management and archival.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is based on storage volume (GB/month) and data retrieval costs. Archive tiers have the lowest storage cost but the highest and most complex retrieval fees.',
+                        'There are often additional costs for early deletion of data from these long-term storage classes.'
+                    ],
+                    common_use_cases: [
+                        'Data archiving, regulatory compliance, and long-term backups.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/s3/storage-classes/glacier/',
+                        azure: 'https://azure.microsoft.com/en-us/services/storage/archive-storage/',
+                        gcp: 'https://cloud.google.com/storage/docs/storage-classes#archive'
+                    }
+                }
+            },
+            { 
+                category: 'Databases', 
+                subCategory: 'Relational DBs', 
+                aws: 'Amazon RDS & Aurora', 
+                azure: 'Azure SQL DB & DB for MySQL/PostgreSQL', 
+                gcp: 'Cloud SQL',
+                comparison: {
+                    summary: 'These services provide managed relational database services, simplifying administration tasks like patching, backups, and high availability. They support popular database engines like MySQL, PostgreSQL, and SQL Server.',
+                    key_differences: [
+                        '<i>AWS</i> Aurora is a proprietary, MySQL and PostgreSQL-compatible relational database built for the cloud, offering higher performance and availability.',
+                        '<i>Azure</i> SQL Database is a fully managed service for Microsoft SQL Server, with a serverless option that scales compute based on workload.',
+                        '<i>GCP</i> Cloud SQL is a fully managed database service for MySQL, PostgreSQL, and SQL Server, known for its simplicity and strong platform integration.'
+                    ],
+                    ecosystem_integrations: [
+                        'All three are deeply integrated with their respective virtual machine, container, and application hosting services.',
+                        'They also integrate with monitoring, logging, and security services for a complete solution.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is generally based on the size of the underlying VM instance, storage (GB/month), and I/O operations.',
+                        'Some serverless options, like Aurora Serverless and Azure SQL DB serverless, offer billing based on database capacity units or compute usage, scaling automatically with demand.'
+                    ],
+                    common_use_cases: [
+                        'Traditional web applications, business intelligence, and e-commerce platforms.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/rds/',
+                        azure: 'https://azure.microsoft.com/en-us/services/sql-database/',
+                        gcp: 'https://cloud.google.com/sql/'
+                    }
+                }
+            },
+            { 
+                category: 'Databases', 
+                subCategory: 'NoSQL DBs', 
+                aws: 'Amazon DynamoDB', 
+                azure: 'Azure Cosmos DB', 
+                gcp: 'Cloud Firestore & Bigtable',
+                comparison: {
+                    summary: 'These services provide fast, flexible, and highly scalable databases for unstructured data, often used in mobile, gaming, and IoT applications.',
+                    key_differences: [
+                        '<i>AWS</i> DynamoDB is a fully managed key-value and document database designed for high-performance applications.',
+                        '<i>Azure</i> Cosmos DB is a globally distributed, multi-model database that supports various APIs like SQL, MongoDB, and Cassandra.',
+                        '<i>GCP</i> offers Cloud Firestore for mobile and web apps and Cloud Bigtable for large-scale data analytics and high-throughput workloads.'
+                    ],
+                    ecosystem_integrations: [
+                        'All are tightly integrated with their respective serverless, mobile, and IoT services for building modern applications.',
+                        'They also offer integrations with data processing services for analytics.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is typically based on provisioned throughput (read/write capacity units), the amount of data stored (GB/month), and data transfer.',
+                        'Some services also offer serverless modes, where you pay per operation, which can be ideal for unpredictable workloads.'
+                    ],
+                    common_use_cases: [
+                        'Mobile app backends, gaming, IoT, and real-time data applications.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/dynamodb/',
+                        azure: 'https://azure.microsoft.com/en-us/services/cosmos-db/',
+                        gcp: 'https://cloud.google.com/firestore/'
+                    }
+                }
+            },
+            { 
+                category: 'Databases', 
+                subCategory: 'Data Warehouse', 
+                aws: 'Amazon Redshift', 
+                azure: 'Azure Synapse Analytics', 
+                gcp: 'Google BigQuery',
+                comparison: {
+                    summary: 'These are fully managed, petabyte-scale data warehouse services designed for large-scale data analytics and business intelligence.',
+                    key_differences: [
+                        '<i>GCP</i> BigQuery is a serverless, highly scalable data warehouse that separates compute and storage, allowing for massive data analysis without managing infrastructure.',
+                        '<i>AWS</i> Redshift is a cluster-based data warehouse solution that requires more upfront configuration and management but offers deep integration with the AWS ecosystem.',
+                        '<i>Azure</i> Synapse Analytics is a comprehensive analytics service that combines data warehousing, data integration, and big data analytics.'
+                    ],
+                    ecosystem_integrations: [
+                        'All are tightly integrated with their respective data processing, BI, and AI/ML services for a complete analytics pipeline.'
+                    ],
+                    pricing_billing: [
+                        '<i>BigQuery</i> is billed based on the amount of data processed by queries and the storage used.',
+                        '<i>Redshift</i> and <i>Synapse Analytics</i> are often based on the size of the cluster or data warehouse units, with separate costs for storage and data transfer.'
+                    ],
+                    common_use_cases: [
+                        'Business intelligence, large-scale data analytics, and reporting.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/redshift/',
+                        azure: 'https://azure.microsoft.com/en-us/services/synapse-analytics/',
+                        gcp: 'https://cloud.google.com/bigquery/'
+                    }
+                }
+            },
+            { 
+                category: 'Databases', 
+                subCategory: 'In-memory Cache', 
+                aws: 'Amazon ElastiCache', 
+                azure: 'Azure Cache for Redis', 
+                gcp: 'Cloud Memorystore',
+                comparison: {
+                    summary: 'These services provide managed in-memory data stores to improve application performance by reducing the load on databases and providing low-latency data access.',
+                    key_differences: [
+                        '<i>AWS</i> ElastiCache supports both Memcached and Redis engines, giving you flexibility in your caching strategy.',
+                        '<i>Azure</i> Cache for Redis and <i>GCP</i> Memorystore are fully managed Redis services, offering seamless integration with their respective platforms and simplifying administration.'
+                    ],
+                    ecosystem_integrations: [
+                        'These services are commonly used in conjunction with relational and NoSQL databases to accelerate read-heavy workloads and improve application performance.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is typically based on the size and number of cache nodes, with costs varying based on the instance type and memory capacity.',
+                        'There are often different tiers of service, with higher-tier options providing better performance and high availability features.'
+                    ],
+                    common_use_cases: [
+                        'Caching database queries, session management, and real-time leaderboards.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/elasticache/',
+                        azure: 'https://azure.microsoft.com/en-us/services/cache/',
+                        gcp: 'https://cloud.google.com/memorystore/'
+                    }
+                }
+            },
+            { 
+                category: 'Networking', 
+                subCategory: 'Virtual Network', 
+                aws: 'Amazon VPC (Virtual Private Cloud)', 
+                azure: 'Azure Virtual Network', 
+                gcp: 'Google VPC (Virtual Private Cloud)',
+                comparison: {
+                    summary: 'These services provide isolated network environments within the cloud, allowing you to define your own IP address ranges, subnets, and routing tables.',
+                    key_differences: [
+                        'A key architectural difference is that <i>GCP</i>\'s VPCs are global, meaning a single VPC can span multiple regions. This simplifies networking and eliminates the need for complex peering.',
+                        'In contrast, <i>AWS</i> VPCs and <i>Azure</i> VNets are regional, requiring peering or other networking solutions to connect resources across different regions.'
+                    ],
+                    ecosystem_integrations: [
+                        'These are the foundational networking services for all other resources, tightly integrated with compute, storage, and security services.'
+                    ],
+                    pricing_billing: [
+                        'There is generally no cost for the virtual network itself, but there are charges for network egress (data transfer out of the network), peering connections, and other advanced networking features.'
+                    ],
+                    common_use_cases: [
+                        'Creating isolated and secure environments for applications, hybrid cloud connections, and network segmentation.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/vpc/',
+                        azure: 'https://azure.microsoft.com/en-us/services/virtual-network/',
+                        gcp: 'https://cloud.google.com/vpc/'
+                    }
+                }
+            },
+            { 
+                category: 'Networking', 
+                subCategory: 'Domain Name System (DNS)', 
+                aws: 'Amazon Route 53', 
+                azure: 'Azure DNS', 
+                gcp: 'Cloud DNS',
+                comparison: {
+                    summary: 'These are scalable and reliable DNS services for domain registration, routing, and management. They are essential for directing traffic to your cloud applications.',
+                    key_differences: [
+                        '<i>AWS</i> Route 53 is known for its wide range of routing policies (e.g., latency-based, geo-based) and deep integration with AWS services.',
+                        '<i>Azure</i> DNS and <i>GCP</i> Cloud DNS offer similar features with strong platform integration, providing a cost-effective and performant DNS solution for their respective cloud ecosystems.'
+                    ],
+                    ecosystem_integrations: [
+                        'These services integrate with load balancers, virtual networks, and other compute services to provide a complete DNS resolution and traffic routing solution.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is typically based on the number of hosted zones and the number of DNS queries received.',
+                        'There may be additional costs for advanced routing and other features.'
+                    ],
+                    common_use_cases: [
+                        'Domain registration, traffic routing, and providing highly available DNS resolution for your applications.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/route53/',
+                        azure: 'https://azure.microsoft.com/en-us/services/dns/',
+                        gcp: 'https://cloud.google.com/dns/'
+                    }
+                }
+            },
+            { 
+                category: 'Networking', 
+                subCategory: 'Content Delivery Network (CDN)', 
+                aws: 'Amazon CloudFront', 
+                azure: 'Azure CDN', 
+                gcp: 'Cloud CDN',
+                comparison: {
+                    summary: 'These CDNs are used to accelerate content delivery by caching it at edge locations around the world, reducing latency and improving user experience.',
+                    key_differences: [
+                        '<i>AWS</i> CloudFront has a vast and mature network of edge locations and is deeply integrated with other AWS services like S3 and EC2.',
+                        '<i>Azure</i> CDN and <i>GCP</i> Cloud CDN offer similar capabilities with seamless integration into their respective storage and application services, making them a natural choice for applications on those platforms.'
+                    ],
+                    ecosystem_integrations: [
+                        'These services integrate with object storage (S3, Blob, Cloud Storage) and web application firewalls for security.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is primarily based on the amount of data transferred (egress) from the edge locations, with costs varying by region.',
+                        'Some providers also charge for the number of HTTP/HTTPS requests to the CDN.'
+                    ],
+                    common_use_cases: [
+                        'Serving static assets (images, videos), accelerating web content, and reducing latency for global users.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/cloudfront/',
+                        azure: 'https://azure.microsoft.com/en-us/services/cdn/',
+                        gcp: 'https://cloud.google.com/cdn/'
+                    }
+                }
+            },
+            { 
+                category: 'Networking', 
+                subCategory: 'Load Balancer', 
+                aws: 'Elastic Load Balancing (ELB)', 
+                azure: 'Azure Load Balancer & Application Gateway', 
+                gcp: 'Cloud Load Balancing',
+                comparison: {
+                    summary: 'These services distribute incoming application traffic across multiple targets to improve application scalability, availability, and fault tolerance.',
+                    key_differences: [
+                        '<i>AWS</i> ELB offers several types of load balancers (Application, Network, Gateway) to handle different traffic needs.',
+                        '<i>GCP</i> Cloud Load Balancing is a single, global service that handles traffic distribution across regions and even continents, simplifying global deployments.',
+                        '<i>Azure</i> offers two main services: Load Balancer for Layer 4 traffic and Application Gateway for Layer 7 traffic with advanced routing features.'
+                    ],
+                    ecosystem_integrations: [
+                        'These services are essential for building highly available and scalable applications and integrate with their respective virtual machine and container services.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is based on the number of load balancer rules, the amount of data processed, and the number of compute hours (for Application Gateways).',
+                        'Costs vary significantly between the different types of load balancers and the volume of traffic they handle.'
+                    ],
+                    common_use_cases: [
+                        'Distributing web traffic, ensuring high availability of applications, and providing a single entry point for a fleet of servers.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/elasticloadbalancing/',
+                        azure: 'https://azure.microsoft.com/en-us/services/load-balancer/',
+                        gcp: 'https://cloud.google.com/load-balancing/'
+                    }
+                }
+            },
+            { 
+                category: 'Identity Services', 
+                subCategory: 'IAM', 
+                aws: 'AWS IAM', 
+                azure: 'Azure Active Directory (Azure AD)', 
+                gcp: 'Google Cloud IAM',
+                comparison: {
+                    summary: 'These services provide granular identity and access management for cloud resources, allowing you to control who can do what within your cloud environment.',
+                    key_differences: [
+                        '<i>AWS</i> IAM is a granular system for defining users, groups, and roles to manage access to AWS resources.',
+                        '<i>Azure</i> Active Directory (Azure AD) is a comprehensive identity solution that is often integrated with on-premises Active Directory and is used for both cloud and on-premises access management.',
+                        '<i>GCP</i> IAM is a resource-hierarchical system that lets you define permissions at the project, folder, or organization level, providing a powerful way to manage access at scale.'
+                    ],
+                    ecosystem_integrations: [
+                        'All three services are foundational to their respective cloud platforms and integrate with every other service to control access and permissions.'
+                    ],
+                    pricing_billing: [
+                        'Core IAM functionality is typically included with your cloud account at no additional charge.',
+                        'There may be costs associated with advanced features such as multi-factor authentication (MFA) and premium editions of Azure AD.'
+                    ],
+                    common_use_cases: [
+                        'Managing user access, enforcing the principle of least privilege, and securing your cloud resources.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/iam/',
+                        azure: 'https://azure.microsoft.com/en-us/services/active-directory/',
+                        gcp: 'https://cloud.google.com/iam/'
+                    }
+                }
+            },
+            { 
+                category: 'Identity Services', 
+                subCategory: 'Workforce Identity & SSO', 
+                aws: 'AWS IAM Identity Center (formerly AWS SSO), Amazon Cognito',
+                azure: 'Azure Active Directory (Azure AD)',
+                gcp: 'Cloud Identity',
+                comparison: {
+                    summary: 'These services provide identity and access management solutions for your workforce, enabling single sign-on (SSO) and centralized user management across your organization.',
+                    key_differences: [
+                        '<i>AWS</i> IAM Identity Center offers a cloud-based single sign-on service that makes it easy to centrally manage SSO access to multiple AWS accounts and business applications.',
+                        '<i>Azure</i> AD is a comprehensive, cloud-based identity and access management service. It provides SSO, multi-factor authentication, and conditional access for applications and resources.',
+                        '<i>GCP</i> Cloud Identity provides a unified identity management service for all Google Cloud and enterprise applications, including other cloud providers. It offers a secure and flexible solution for managing user identities.'
+                    ],
+                    ecosystem_integrations: [
+                        'These services are deeply integrated with their respective cloud platforms and are used to provide access to a wide range of cloud resources and third-party applications.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is typically based on the number of users and the features used. Some services offer a free tier for basic functionality, with premium tiers available for advanced features like conditional access and enhanced security.'
+                    ],
+                    common_use_cases: [
+                        'Centralized identity management, single sign-on (SSO) for employees, and secure access to cloud resources and applications.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/iam/features/sso/',
+                        azure: 'https://azure.microsoft.com/en-us/services/active-directory/',
+                        gcp: 'https://cloud.google.com/identity/'
+                    }
+                }
+            },
+            { 
+                category: 'Analytics & AI/ML', 
+                subCategory: 'Data Processing', 
+                aws: 'AWS Glue, Amazon EMR', 
+                azure: 'Azure Data Factory, Azure Databricks', 
+                gcp: 'Cloud Dataflow, Cloud Dataproc',
+                comparison: {
+                    summary: 'These services provide tools for data processing and ETL (Extract, Transform, Load) tasks, often supporting popular open-source frameworks like Apache Spark and Hadoop.',
+                    key_differences: [
+                        '<i>GCP</i> Cloud Dataflow is particularly strong for streaming and batch processing with a unified programming model, making it a flexible tool for real-time analytics.',
+                        '<i>AWS</i> Glue is a fully managed ETL service, while Amazon EMR offers a managed Hadoop framework for big data processing.',
+                        '<i>Azure</i> Data Factory provides a data integration service for building ETL pipelines, and Azure Databricks offers a collaborative, Apache Spark-based platform.'
+                    ],
+                    ecosystem_integrations: [
+                        'All of these services integrate with their respective cloud storage and data warehouse services to form a complete data processing pipeline.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is typically based on the duration of compute resources used, with some services billing by data processed.',
+                        'Costs vary depending on the complexity of the data pipeline and the scale of the data being processed.'
+                    ],
+                    common_use_cases: [
+                        'Data transformation and cleaning, real-time streaming analytics, and running big data workloads.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/big-data/datalakes-and-analytics/',
+                        azure: 'https://azure.microsoft.com/en-us/solutions/big-data-analytics/',
+                        gcp: 'https://cloud.google.com/solutions/big-data/'
+                    }
+                }
+            },
+            { 
+                category: 'Analytics & AI/ML', 
+                subCategory: 'Machine Learning', 
+                aws: 'Amazon SageMaker', 
+                azure: 'Azure Machine Learning', 
+                gcp: 'Vertex AI',
+                comparison: {
+                    summary: 'These services are managed platforms for building, training, and deploying machine learning models at scale, aimed at both data scientists and developers.',
+                    key_differences: [
+                        '<i>AWS</i> SageMaker has a wide range of pre-built algorithms, notebooks, and tools for every step of the ML workflow, making it a comprehensive platform.',
+                        '<i>GCP</i> Vertex AI is a unified platform for ML development that integrates tools for data labeling, model training, and serving with a focus on ease of use and scalability.',
+                        '<i>Azure</i> Machine Learning is a robust platform that offers a powerful development environment and strong integration with other Azure data and compute services.'
+                    ],
+                    ecosystem_integrations: [
+                        'All three platforms offer deep integrations with their respective data storage, compute, and model serving services for a complete ML lifecycle management.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is based on the compute resources used for model training and deployment, as well as the storage consumed by models and datasets.',
+                        'Costs vary significantly depending on the type of compute (e.g., CPU vs. GPU), the duration of training jobs, and the amount of data processed.'
+                    ],
+                    common_use_cases: [
+                        'Building and deploying custom machine learning models, MLOps, and running large-scale training jobs.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/sagemaker/',
+                        azure: 'https://azure.microsoft.com/en-us/services/machine-learning/',
+                        gcp: 'https://cloud.google.com/vertex-ai/'
+                    }
+                }
+            },
+            { 
+                category: 'Analytics & AI/ML', 
+                subCategory: 'Data Lake', 
+                aws: 'AWS Lake Formation', 
+                azure: 'Azure Data Lake Storage', 
+                gcp: 'Cloud Storage (used as data lake)',
+                comparison: {
+                    summary: 'Data lake services provide a centralized repository for storing large amounts of raw data in its native format, enabling flexible analytics and AI workloads.',
+                    key_differences: [
+                        '<i>AWS</i> Lake Formation and <i>Azure</i> Data Lake Storage are dedicated services for building and managing data lakes with integrated security and governance.',
+                        '<i>GCP</i> uses its general-purpose object storage service, Cloud Storage, as the foundation for data lakes, leveraging its performance and durability as a flexible, scalable data platform.'
+                    ],
+                    ecosystem_integrations: [
+                        'These services integrate with data processing engines, data warehouses, and BI tools to provide a complete analytics solution.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is typically based on the amount of data stored (GB/month) and the number of operations performed, similar to object storage services.',
+                        'Additional costs may apply for data transfer and for using other services (e.g., data processing) that integrate with the data lake.'
+                    ],
+                    common_use_cases: [
+                        'Storing vast amounts of raw data, big data analytics, and machine learning.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/lake-formation/',
+                        azure: 'https://azure.microsoft.com/en-us/services/storage/data-lake-storage/',
+                        gcp: 'https://cloud.google.com/data-lake-solution/'
+                    }
+                }
+            },
+            {
+                category: 'Operations',
+                subCategory: 'Monitoring & Logging',
+                aws: 'Amazon CloudWatch',
+                azure: 'Azure Monitor',
+                gcp: 'Google Cloud Operations Suite',
+                comparison: {
+                    summary: 'These services provide a comprehensive suite of tools for monitoring, logging, and tracing applications and infrastructure. They are crucial for maintaining the health and performance of cloud environments.',
+                    key_differences: [
+                        '<i>AWS</i> CloudWatch offers metrics collection, alarms, and dashboards. It is tightly integrated with all AWS services, providing a single pane of glass for monitoring your infrastructure.',
+                        '<i>Azure</i> Monitor provides comprehensive data collection from applications, OS, and resources, with deep analytics and visualization. It includes features like Application Insights for code-level monitoring and Log Analytics for powerful querying.',
+                        '<i>GCP</i> Cloud Operations Suite (formerly Stackdriver) combines logging, monitoring, tracing, and error reporting into a single, unified platform, making it easy to troubleshoot and debug applications.'
+                    ],
+                    ecosystem_integrations: [
+                        'All of these services are deeply integrated with their respective cloud provider\'s compute, networking, and storage services to provide real-time performance and health insights.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is typically based on the volume of data ingested (logs, metrics) and the number of API calls or custom metrics used.',
+                        'There are often different costs associated with log storage duration and advanced features like custom dashboards or synthetic monitoring.'
+                    ],
+                    common_use_cases: [
+                        'Application performance monitoring (APM), infrastructure monitoring, centralized logging, and alerting on critical events.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/cloudwatch/',
+                        azure: 'https://azure.microsoft.com/en-us/services/monitor/',
+                        gcp: 'https://cloud.google.com/operations/'
+                    }
+                }
+            },
+            {
+                category: 'Management Tools',
+                subCategory: 'Infrastructure as Code (IaC)',
+                aws: 'AWS CloudFormation',
+                azure: 'Azure Resource Manager (ARM)',
+                gcp: 'Google Cloud Deployment Manager',
+                comparison: {
+                    summary: 'These services allow you to define, deploy, and manage your cloud infrastructure using configuration files as code, enabling automation and consistency.',
+                    key_differences: [
+                        '<i>AWS</i> CloudFormation uses templates to define a collection of AWS resources and provisions them in an orderly and predictable way. It is a declarative service deeply integrated with the AWS ecosystem.',
+                        '<i>Azure</i> Resource Manager (ARM) is a management layer that enables you to create, update, and delete resources in your Azure subscription. ARM templates define your infrastructure in a declarative format.',
+                        '<i>GCP</i> Cloud Deployment Manager provides a similar service for creating and managing GCP resources. It uses YAML and Python or Jinja2 templates to define resource dependencies and configurations.'
+                    ],
+                    ecosystem_integrations: [
+                        'These services are tightly integrated with their respective cloud platforms and are the primary way to automate infrastructure provisioning.'
+                    ],
+                    pricing_billing: [
+                        'All three services are generally included with your cloud account at no additional cost for basic usage. Costs may be incurred for the underlying resources that the templates provision, such as virtual machines or databases.'
+                    ],
+                    common_use_cases: [
+                        'Automating infrastructure deployment, managing environments, and ensuring consistency across cloud resources.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/cloudformation/',
+                        azure: 'https://azure.microsoft.com/en-us/services/azure-resource-manager/',
+                        gcp: 'https://cloud.google.com/deployment-manager/'
+                    }
+                }
+            },
+            {
+                category: 'Management Tools',
+                subCategory: 'Configuration Management',
+                aws: 'AWS Systems Manager',
+                azure: 'Azure Automation',
+                gcp: 'Google Cloud OS Config',
+                comparison: {
+                    summary: 'These services help you automate the configuration and management of your virtual machines and servers, ensuring consistency and compliance across your fleet.',
+                    key_differences: [
+                        '<i>AWS</i> Systems Manager provides a unified interface for managing operational data and automating tasks across your AWS resources. It includes features like Patch Manager, Run Command, and State Manager.',
+                        '<i>Azure</i> Automation is a cloud-based automation and configuration management service that supports PowerShell and Python runbooks for task automation and Desired State Configuration (DSC) for consistent server configuration.',
+                        '<i>GCP</i> Cloud OS Config automates OS configurations and patches, ensuring that your VM instances are up-to-date and compliant with your policies. It supports both Linux and Windows instances.'
+                    ],
+                    ecosystem_integrations: [
+                        'These services integrate with virtual machines and other compute resources to manage their state and configuration over time.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is based on the number of automation tasks executed, the duration of those tasks, and the number of managed instances.',
+                        'Some features may be included in a free tier, while advanced automation and reporting may incur additional costs.'
+                    ],
+                    common_use_cases: [
+                        'Automating patch management, executing commands on a fleet of servers, and ensuring configuration compliance.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/systems-manager/',
+                        azure: 'https://azure.microsoft.com/en-us/services/automation/',
+                        gcp: 'https://cloud.google.com/compute/docs/os-config/'
+                    }
+                }
+            },
+            {
+                category: 'Developer Tools',
+                subCategory: 'CI/CD & Build',
+                aws: 'AWS CodeBuild, AWS CodePipeline',
+                azure: 'Azure Pipelines',
+                gcp: 'Cloud Build',
+                comparison: {
+                    summary: 'These services provide tools for continuous integration and continuous delivery (CI/CD) by automating the process of building, testing, and deploying your code.',
+                    key_differences: [
+                        '<i>AWS</i> CodeBuild is a fully managed build service that compiles source code, runs unit tests, and produces deployable artifacts. It is part of the larger AWS CodePipeline for end-to-end CI/CD.',
+                        '<i>Azure</i> Pipelines is a feature of Azure DevOps that automatically builds and tests code projects and supports a wide variety of languages and application types.',
+                        '<i>GCP</i> Cloud Build is a serverless CI/CD platform that executes your builds on GCP. It can import code from various repositories and build a variety of artifacts, including container images.'
+                    ],
+                    ecosystem_integrations: [
+                        'These services integrate with source code repositories like GitHub and Bitbucket, as well as with their respective cloud deployment and container services.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is typically based on the compute time consumed by build jobs, often billed in minutes.',
+                        'Costs vary based on the machine type used for the build and the number of parallel builds running.'
+                    ],
+                    common_use_cases: [
+                        'Automating the build and test process for applications, continuous integration, and creating a CI/CD pipeline.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/codepipeline/',
+                        azure: 'https://azure.microsoft.com/en-us/services/devops/pipelines/',
+                        gcp: 'https://cloud.google.com/cloud-build/'
+                    }
+                }
+            },
+            {
+                category: 'Developer Tools',
+                subCategory: 'Artifact Registries',
+                aws: 'Amazon ECR (Elastic Container Registry)',
+                azure: 'Azure Container Registry',
+                gcp: 'Google Artifact Registry',
+                comparison: {
+                    summary: 'These services provide a secure, private registry for storing and managing your container images and other software artifacts, enabling a streamlined development workflow.',
+                    key_differences: [
+                        '<i>AWS</i> ECR is a fully managed Docker container registry that is integrated with AWS services like ECS and EKS, providing a simple way to store and manage images for your containerized applications.',
+                        '<i>Azure</i> Container Registry is a private, managed Docker registry that is deeply integrated with Azure\'s container platforms and developer tools.',
+                        '<i>GCP</i> Artifact Registry is a single, unified registry for storing both container images and other package formats (e.g., Maven, npm), replacing the older Container Registry service and providing a more flexible solution.'
+                    ],
+                    ecosystem_integrations: [
+                        'These services are essential for containerized workflows and integrate with their respective CI/CD and orchestration services.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is based on the amount of storage consumed by your artifacts (GB/month) and the amount of data transferred when pulling or pushing images.',
+                        'Costs may vary based on the tier of service, with some offering a free tier for a limited amount of storage.'
+                    ],
+                    common_use_cases: [
+                        'Storing container images, managing software packages, and securing the supply chain for applications.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/ecr/',
+                        azure: 'https://azure.microsoft.com/en-us/services/container-registry/',
+                        gcp: 'https://cloud.google.com/artifact-registry/'
+                    }
+                }
+            },
+            {
+                category: 'Security',
+                subCategory: 'WAF & DDoS Protection',
+                aws: 'AWS WAF & AWS Shield',
+                azure: 'Azure Application Gateway (with WAF) & Azure DDoS Protection',
+                gcp: 'Google Cloud Armor',
+                comparison: {
+                    summary: 'These services protect web applications and network resources from common exploits and denial-of-service (DDoS) attacks, ensuring high availability and security.',
+                    key_differences: [
+                        '<i>AWS</i> WAF allows you to create custom rules to filter web traffic, while AWS Shield provides managed DDoS protection, with a standard tier included for all AWS customers.',
+                        '<i>Azure</i> Application Gateway provides a web application firewall (WAF) to protect against web attacks. Azure DDoS Protection offers enhanced mitigation capabilities for network-layer attacks.',
+                        '<i>GCP</i> Cloud Armor is a security service that provides WAF and DDoS protection to defend applications running on Google Cloud, leveraging Google’s global network.'
+                    ],
+                    ecosystem_integrations: [
+                        'These services integrate with load balancers, CDNs, and other networking services to protect incoming traffic.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is typically based on the number of web requests processed and the number of rules configured for WAF services.',
+                        'DDoS protection services are often tiered, with a standard tier included and premium tiers available for more advanced protection and cost-based mitigation.'
+                    ],
+                    common_use_cases: [
+                        'Protecting public-facing web applications, mitigating bot traffic, and defending against network attacks.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/waf/',
+                        azure: 'https://azure.microsoft.com/en-us/services/web-application-firewall/',
+                        gcp: 'https://cloud.google.com/armor/'
+                    }
+                }
+            },
+            {
+                category: 'Security',
+                subCategory: 'Key Management',
+                aws: 'AWS KMS (Key Management Service)',
+                azure: 'Azure Key Vault',
+                gcp: 'Google Cloud KMS (Key Management Service)',
+                comparison: {
+                    summary: 'These services provide a centralized and secure way to manage cryptographic keys used to encrypt data and other cloud resources, ensuring data protection and compliance.',
+                    key_differences: [
+                        'All three services provide a managed, highly available way to create, store, and manage encryption keys.',
+                        'They are all integrated with hardware security modules (HSMs) to protect your keys.',
+                        'The services are tightly integrated with other cloud services on their respective platforms, making it easy to encrypt data at rest and in transit.'
+                    ],
+                    ecosystem_integrations: [
+                        'These services are essential for a variety of services, including database encryption, object storage encryption, and virtual machine encryption.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is typically based on the number of keys managed and the number of API calls made to the service for cryptographic operations.',
+                        'There may be additional costs for using custom key material or advanced features like HSM-backed keys.'
+                    ],
+                    common_use_cases: [
+                        'Centralized management of encryption keys, secrets management, and digital certificate management.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/kms/',
+                        azure: 'https://azure.microsoft.com/en-us/services/key-vault/',
+                        gcp: 'https://cloud.google.com/kms/'
+                    }
+                }
+            },
+            {
+                category: 'Security',
+                subCategory: 'Compliance & Governance',
+                aws: 'AWS Config, AWS Audit Manager',
+                azure: 'Azure Policy, Microsoft Purview',
+                gcp: 'Google Cloud Security Command Center',
+                comparison: {
+                    summary: 'These services help you automate compliance checks, audit your cloud environment, and enforce security policies to meet industry standards and internal governance requirements.',
+                    key_differences: [
+                        '<i>AWS</i> Config tracks resource changes and a desired configuration. AWS Audit Manager simplifies the process of auditing your cloud usage for compliance.',
+                        '<i>Azure</i> Policy allows you to create, assign, and manage policy definitions to enforce resource governance. Microsoft Purview provides a comprehensive view of your data estate to manage governance.',
+                        '<i>GCP</i> Cloud Security Command Center is a centralized platform for security and risk management, helping you to find, assess, and fix security vulnerabilities.'
+                    ],
+                    ecosystem_integrations: [
+                        'These services are integrated with IAM and other security tools to provide a complete picture of your security and compliance posture.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is typically based on the number of resources evaluated, the number of API calls, and the amount of data scanned for policy violations.',
+                        'Some services may offer a free tier for basic usage, with advanced features incurring additional costs.'
+                    ],
+                    common_use_cases: [
+                        'Automating compliance reporting, enforcing security best practices, and auditing resource configurations.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/compliance/',
+                        azure: 'https://azure.microsoft.com/en-us/solutions/security-compliance/',
+                        gcp: 'https://cloud.google.com/security-command-center/'
+                    }
+                }
+            },
+            {
+                category: 'Security',
+                subCategory: 'Secrets Management',
+                aws: 'AWS Secrets Manager',
+                azure: 'Azure Key Vault',
+                gcp: 'Google Cloud Secret Manager',
+                comparison: {
+                    summary: 'These services provide a secure way to store, manage, and rotate sensitive information like database credentials, API keys, and other secrets, reducing the risk of hard-coding them in your applications.',
+                    key_differences: [
+                        '<i>AWS</i> Secrets Manager allows you to easily rotate credentials for supported databases, simplifying security management.',
+                        '<i>Azure</i> Key Vault provides a secure storage for keys, secrets, and certificates. Secrets are versioned and can be retrieved using a REST API.',
+                        '<i>GCP</i> Cloud Secret Manager is a fully managed service that provides a central, secure location to store and manage secrets, with features like automatic rotation and access control.'
+                    ],
+                    ecosystem_integrations: [
+                        'These services are used by applications running on virtual machines, containers, and serverless functions to securely retrieve credentials and other sensitive information at runtime.'
+                    ],
+                    pricing_billing: [
+                        'Pricing is based on the number of secrets stored and the number of access operations performed on those secrets.',
+                        'Costs are generally low but can scale with a large number of secrets and high-frequency access patterns.'
+                    ],
+                    common_use_cases: [
+                        'Storing database credentials, API keys, and other application secrets securely.'
+                    ],
+                    links: {
+                        aws: 'https://aws.amazon.com/secrets-manager/',
+                        azure: 'https://azure.microsoft.com/en-us/services/key-vault/',
+                        gcp: 'https://cloud.google.com/secret-manager/'
+                    }
+                }
+            },
+        ];
+
+        const mainView = document.getElementById('main-view');
+        const comparisonView = document.getElementById('comparison-view');
+        const servicesContainer = document.getElementById('services-container');
+        const searchInput = document.getElementById('search-input');
+        const categoryFiltersContainer = document.getElementById('category-filters');
+        const noResultsMessage = document.getElementById('no-results');
+        const backButton = document.getElementById('back-button');
+
+        const comparisonTitle = document.getElementById('comparison-title');
+        const comparisonSummary = document.getElementById('comparison-summary');
+        const comparisonDetails = document.getElementById('comparison-details');
+        const documentationLinks = document.getElementById('documentation-links');
+
+        let activeCategory = 'All';
+        let searchTerm = '';
+
+        const categories = ['All', ...new Set(servicesData.map(s => s.category))];
+
+        function renderCategories() {
+            categoryFiltersContainer.innerHTML = categories.map(category => `
+                <button
+                    class="filter-btn px-4 py-2 text-sm font-medium rounded-full transition ${category === activeCategory ? 'active' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'}"
+                    data-category="${category}">
+                    ${category}
+                </button>
+            `).join('');
+        }
+
+        function renderServices() {
+            const filteredServices = servicesData.filter(service => {
+                const matchesCategory = activeCategory === 'All' || service.category === activeCategory;
+                const matchesSearch = searchTerm === '' ||
+                    service.subCategory.toLowerCase().includes(searchTerm) ||
+                    service.aws.toLowerCase().includes(searchTerm) ||
+                    service.azure.toLowerCase().includes(searchTerm) ||
+                    service.gcp.toLowerCase().includes(searchTerm);
+                return matchesCategory && matchesSearch;
+            });
+
+            if (filteredServices.length === 0) {
+                servicesContainer.innerHTML = '';
+                noResultsMessage.classList.remove('hidden');
+            } else {
+                noResultsMessage.classList.add('hidden');
+                servicesContainer.innerHTML = filteredServices.map(service => `
+                    <div class="card bg-white rounded-xl shadow-md overflow-hidden p-6 border border-slate-200/80" data-category="${service.category}" data-subcategory="${service.subCategory}">
+                        <div class="mb-4">
+                            <p class="text-sm font-semibold text-blue-600 uppercase tracking-wider">${service.category}</p>
+                            <h3 class="text-xl font-bold text-slate-800 mt-1">${service.subCategory}</h3>
+                        </div>
+                        <div class="space-y-4 text-slate-600">
+                            <div class="flex items-start">
+                                <span class="font-bold w-16 text-sm flex-shrink-0">AWS:</span>
+                                <span class="text-sm">${service.aws}</span>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="font-bold w-16 text-sm flex-shrink-0">Azure:</span>
+                                <span class="text-sm">${service.azure}</span>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="font-bold w-16 text-sm flex-shrink-0">GCP:</span>
+                                <span class="text-sm">${service.gcp}</span>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <button class="read-more-btn mt-4 inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition">
+                                Read More
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function showComparison(subCategory) {
+            const service = servicesData.find(s => s.subCategory === subCategory);
+            if (service && service.comparison) {
+                comparisonTitle.textContent = `${service.subCategory} Comparison`;
+                comparisonSummary.textContent = service.comparison.summary;
+                
+                let detailsHtml = '';
+
+                if (service.comparison.key_differences && service.comparison.key_differences.length > 0) {
+                    detailsHtml += `
+                        <div>
+                            <h4 class="text-lg font-semibold text-slate-800 mb-2">Key Differences</h4>
+                            <ul class="list-disc list-inside space-y-2 text-slate-700 leading-relaxed pl-4">
+                                ${service.comparison.key_differences.map(diff => `<li>${diff}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                if (service.comparison.ecosystem_integrations && service.comparison.ecosystem_integrations.length > 0) {
+                    detailsHtml += `
+                        <div>
+                            <h4 class="text-lg font-semibold text-slate-800 mb-2">Ecosystem & Integrations</h4>
+                            <ul class="list-disc list-inside space-y-2 text-slate-700 leading-relaxed pl-4">
+                                ${service.comparison.ecosystem_integrations.map(diff => `<li>${diff}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                if (service.comparison.pricing_billing && service.comparison.pricing_billing.length > 0) {
+                    detailsHtml += `
+                        <div>
+                            <h4 class="text-lg font-semibold text-slate-800 mb-2">Pricing & Billing</h4>
+                            <ul class="list-disc list-inside space-y-2 text-slate-700 leading-relaxed pl-4">
+                                ${service.comparison.pricing_billing.map(diff => `<li>${diff}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                if (service.comparison.common_use_cases && service.comparison.common_use_cases.length > 0) {
+                    detailsHtml += `
+                        <div>
+                            <h4 class="text-lg font-semibold text-slate-800 mb-2">Common Use Cases</h4>
+                            <ul class="list-disc list-inside space-y-2 text-slate-700 leading-relaxed pl-4">
+                                ${service.comparison.common_use_cases.map(diff => `<li>${diff}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                comparisonDetails.innerHTML = detailsHtml;
+
+                documentationLinks.innerHTML = `
+                    <a href="${service.comparison.links.aws}" target="_blank" class="flex-1 text-center py-2 px-4 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition">AWS Docs</a>
+                    <a href="${service.comparison.links.azure}" target="_blank" class="flex-1 text-center py-2 px-4 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition">Azure Docs</a>
+                    <a href="${service.comparison.links.gcp}" target="_blank" class="flex-1 text-center py-2 px-4 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition">GCP Docs</a>
+                `;
+
+                mainView.classList.add('hidden');
+                comparisonView.classList.remove('hidden');
+            }
+        }
+
+        function showMainView() {
+            comparisonView.classList.add('hidden');
+            mainView.classList.remove('hidden');
+        }
+
+        categoryFiltersContainer.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                activeCategory = e.target.dataset.category;
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                renderServices();
+            }
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            searchTerm = e.target.value.toLowerCase();
+            renderServices();
+        });
+
+        servicesContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('read-more-btn')) {
+                const card = e.target.closest('.card');
+                const subCategory = card.dataset.subcategory;
+                showComparison(subCategory);
+            }
+        });
+
+        backButton.addEventListener('click', showMainView);
+
+        function initializeApp() {
+            renderCategories();
+            renderServices();
+        }
+
+        initializeApp();
+    </script>
+</body>
+</html>
