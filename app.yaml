@@ -1,8 +1,4 @@
-runtime: python312 # Using Python 3.12 as recommended
-instance_class: F1 # Use a small instance class suitable for static sites
-basic_scaling:
-  max_instances: 1 # Keep it to a single instance for cost-effectiveness and simplicity
-  idle_timeout: 10m # Optional: instance stays alive for 10 minutes after last request
+runtime: python312
 handlers:
 - url: /
   static_files: www/index.html
