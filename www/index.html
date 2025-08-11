@@ -44,7 +44,7 @@
             <header class="text-center mb-8">
                 <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">Cloud Service Explorer</h1>
                 <p class="text-md text-slate-600 max-w-3xl mx-auto">
-                    An interactive guide to the cloud service landscape. Use the filters and search bar below to compare equivalent services across Amazon Web Services (AWS), Microsoft Azure, and Google Cloud Platform (GCP).
+                    An interactive guide to the cloud service landscape. Use the filters and search bar below to compare equivalent services across Amazon Web Services (AWS), Microsoft Azure, Google Cloud Platform (GCP), and Oracle Cloud Infrastructure (OCI).
                 </p>
             </header>
 
@@ -100,29 +100,34 @@
                 aws: 'Amazon EC2 (Elastic Compute Cloud)', 
                 azure: 'Azure Virtual Machines', 
                 gcp: 'Google Compute Engine (GCE)',
+                oci: 'OCI Compute (VMs, Bare Metal)',
                 comparison: {
-                    summary: 'All three providers offer virtual machines, but they differ in features, billing models, and the degree of integration with their own ecosystems.',
+                    summary: 'All four providers offer virtual machines, but they differ in features, billing models, and the degree of integration with their own ecosystems.',
                     key_differences: [
                         '<i>GCP</i> offers live migration of running VMs between hosts, allowing for proactive infrastructure maintenance without service disruption.',
                         '<i>AWS</i> offers a broader range of specialized instance types (e.g., Graviton-based, GPU-optimized) and has a more mature market presence.',
-                        '<i>Azure</i> has strong ties to Microsoft enterprise tools and a wide array of Windows-specific configurations.'
+                        '<i>Azure</i> has strong ties to Microsoft enterprise tools and a wide array of Windows-specific configurations.',
+                        '<i>OCI</i> offers flexible VM shapes allowing granular control over OCPUs and memory, and strong bare metal offerings for high performance and isolation.'
                     ],
                     ecosystem_integrations: [
                         '<i>AWS</i> has the largest ecosystem with the most mature tools and third-party integrations.',
                         '<i>Azure</i> offers deep integration with Microsoft software and enterprise services, such as Active Directory and System Center.',
-                        '<i>GCP</i> integrates natively with open-source tools and is known for its strong integration with data and machine learning services.'
+                        '<i>GCP</i> integrates natively with open-source tools and is known for its strong integration with data and machine learning services.',
+                        '<i>OCI</i> is optimized for Oracle workloads and offers specific integrations with Oracle databases and applications, including unique multicloud offerings like Oracle Database@Azure and Oracle Database@Google Cloud.'
                     ],
                     pricing_billing: [
                         '<i>GCP</i> provides per-second billing, which can be more cost-effective for short-duration workloads compared to AWS and Azure\'s per-minute models.',
-                        'All three offer various pricing models including On-Demand, Reserved Instances (AWS)/Committed Use Discounts (GCP), and Spot instances for significant cost savings.'
+                        'All four offer various pricing models including On-Demand, Reserved Instances (AWS)/Committed Use Discounts (GCP)/Universal Credits (OCI), and Spot instances for significant cost savings.',
+                        '<i>OCI</i> often claims lower compute costs, especially for higher OCPU counts, and offers a generous Always Free tier.'
                     ],
                     common_use_cases: [
-                        'General-purpose computing, web servers, and application hosting.'
+                        'General-purpose computing, web servers, application hosting, and running enterprise applications.'
                     ],
                     links: {
                         aws: 'https://aws.amazon.com/ec2/',
                         azure: 'https://azure.microsoft.com/en-us/services/virtual-machines/',
-                        gcp: 'https://cloud.google.com/compute/'
+                        gcp: 'https://cloud.google.com/compute/',
+                        oci: 'https://www.oracle.com/cloud/compute/'
                     }
                 }
             },
@@ -132,20 +137,23 @@
                 aws: 'AWS Lambda', 
                 azure: 'Azure Functions', 
                 gcp: 'Cloud Functions',
+                oci: 'OCI Functions',
                 comparison: {
                     summary: 'These services all provide a function-as-a-service model, running code in response to events without managing servers, but they differ in runtime support and ecosystem integration.',
                     key_differences: [
                         '<i>AWS</i> Lambda is the most mature service with a vast ecosystem of integrations and a wide array of supported runtimes.',
                         '<i>Azure</i> Functions is deeply integrated with the Microsoft ecosystem and offers a powerful development experience, particularly for .NET developers.',
-                        '<i>GCP</i> Cloud Functions is known for its simplicity and fast cold-start times, making it excellent for event-driven architectures on the GCP platform.'
+                        '<i>GCP</i> Cloud Functions is known for its simplicity and fast cold-start times, making it excellent for event-driven architectures on the GCP platform.',
+                        '<i>OCI</i> Functions is based on the open-source Fn Project, offering flexibility and portability for serverless workloads.'
                     ],
                     ecosystem_integrations: [
                         '<i>AWS</i> Lambda triggers are available for most AWS services, enabling event-driven architectures at scale.',
                         '<i>Azure</i> Functions integrates with Azure Event Grid, Azure Cosmos DB, and other Azure services.',
-                        '<i>GCP</i> Cloud Functions integrates with Firebase and other GCP services, and also has an HTTP trigger for web hooks.'
+                        '<i>GCP</i> Cloud Functions integrates with Firebase and other GCP services, and also has an HTTP trigger for web hooks.',
+                        '<i>OCI</i> Functions integrates with OCI events, streaming, and other OCI services.'
                     ],
                     pricing_billing: [
-                        'All three services typically have a free tier and are billed based on the number of requests and the duration of execution, often in milliseconds.',
+                        'All four services typically have a free tier and are billed based on the number of requests and the duration of execution, often in milliseconds.',
                         'Pricing is highly granular and scales automatically with usage, making them very cost-effective for intermittent workloads.'
                     ],
                     common_use_cases: [
@@ -154,7 +162,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/lambda/',
                         azure: 'https://azure.microsoft.com/en-us/services/functions/',
-                        gcp: 'https://cloud.google.com/functions/'
+                        gcp: 'https://cloud.google.com/functions/',
+                        oci: 'https://www.oracle.com/cloud/functions/'
                     }
                 }
             },
@@ -164,20 +173,24 @@
                 aws: 'Amazon ECS & EKS', 
                 azure: 'Azure Container Apps & AKS', 
                 gcp: 'Cloud Run & GKE',
+                oci: 'OCI Container Engine for Kubernetes (OKE)',
                 comparison: {
                     summary: 'While all platforms offer managed Kubernetes, they also provide alternatives for simpler container management, each with its own advantages.',
                     key_differences: [
                         '<i>GKE</i> is often considered the most native and mature managed Kubernetes service, benefiting from Google\'s experience with Kubernetes.',
                         '<i>AWS</i> offers EKS for Kubernetes, but also ECS as a highly-integrated, proprietary alternative for simpler container deployments.',
-                        '<i>Azure</i> provides AKS with strong integration into Azure services and a serverless option via Azure Container Apps for hosting containers without managing Kubernetes.'
+                        '<i>Azure</i> provides AKS with strong integration into Azure services and a serverless option via Azure Container Apps for hosting containers without managing Kubernetes.',
+                        '<i>OCI</i> Container Engine for Kubernetes (OKE) is a fully managed Kubernetes service that simplifies deployment and scaling of containerized applications on OCI.'
                     ],
                     ecosystem_integrations: [
                         '<i>AWS</i> container services integrate with Amazon ECR for image management and CloudWatch for monitoring.',
                         '<i>Azure</i> AKS integrates with Azure Container Registry for image storage and Azure Monitor for performance tracking.',
-                        '<i>GCP</i> GKE integrates with Cloud Build for CI/CD and Artifact Registry for image management.'
+                        '<i>GCP</i> GKE integrates with Cloud Build for CI/CD and Artifact Registry for image management.',
+                        '<i>OCI</i> OKE integrates with OCI Registry for container image storage and OCI Monitoring for observability.'
                     ],
                     pricing_billing: [
-                        'Pricing varies significantly based on the service. Managed Kubernetes services often charge for control plane management, while serverless options like Cloud Run and Azure Container Apps are typically billed based on usage (requests and compute time).'
+                        'Pricing varies significantly based on the service. Managed Kubernetes services often charge for control plane management, while serverless options like Cloud Run and Azure Container Apps are typically billed based on usage (requests and compute time).',
+                        '<i>OCI</i> OKE offers a free control plane for basic clusters, with charges for worker nodes.'
                     ],
                     common_use_cases: [
                         'Microservices architectures, containerized applications, and high-scale web services.'
@@ -185,7 +198,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/eks/',
                         azure: 'https://azure.microsoft.com/en-us/services/kubernetes-service/',
-                        gcp: 'https://cloud.google.com/kubernetes-engine/'
+                        gcp: 'https://cloud.google.com/kubernetes-engine/',
+                        oci: 'https://www.oracle.com/cloud/container-engine-for-kubernetes/'
                     }
                 }
             },
@@ -195,17 +209,20 @@
                 aws: 'AWS Elastic Beanstalk', 
                 azure: 'Azure App Service', 
                 gcp: 'Google App Engine',
+                oci: 'OCI Application Development services (e.g., Visual Builder, Digital Assistant)',
                 comparison: {
                     summary: 'These PaaS offerings abstract infrastructure management, allowing developers to focus purely on their code. They are excellent for quickly deploying web apps and APIs.',
                     key_differences: [
                         '<i>Azure</i> App Service is highly popular with developers using the Microsoft stack and integrates seamlessly with other Azure services.',
                         '<i>GCP</i> App Engine is known for its ease of use with Python and Java, offering a robust, fully managed environment.',
-                        '<i>AWS</i> Elastic Beanstalk provides a more open and customizable PaaS experience, allowing for more control over the underlying EC2 instances and resources.'
+                        '<i>AWS</i> Elastic Beanstalk provides a more open and customizable PaaS experience, allowing for more control over the underlying EC2 instances and resources.',
+                        '<i>OCI</i> offers various application development services, but a direct 1:1 equivalent to a general-purpose PaaS like App Engine or App Service is less defined. OCI focuses more on specific application platforms like Oracle WebLogic Server for OCI.'
                     ],
                     ecosystem_integrations: [
                         '<i>AWS</i> Elastic Beanstalk integrates with a variety of AWS services for logging, monitoring, and database management.',
                         '<i>Azure</i> App Service integrates deeply with Azure Active Directory for authentication and Azure DevOps for CI/CD pipelines.',
-                        '<i>GCP</i> App Engine is tightly integrated with Google Cloud\'s developer tools and services like Cloud Datastore.'
+                        '<i>GCP</i> App Engine is tightly integrated with Google Cloud\'s developer tools and services like Cloud Datastore.',
+                        '<i>OCI</i> application services integrate with Oracle databases and enterprise applications.'
                     ],
                     pricing_billing: [
                         'Pricing is based on the underlying compute resources consumed (e.g., virtual machine sizes and instances), often with a separate cost for network traffic and other services used.',
@@ -217,7 +234,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/elasticbeanstalk/',
                         azure: 'https://azure.microsoft.com/en-us/services/app-service/',
-                        gcp: 'https://cloud.google.com/appengine/'
+                        gcp: 'https://cloud.google.com/appengine/',
+                        oci: 'https://www.oracle.com/cloud/application-development/'
                     }
                 }
             },
@@ -227,20 +245,24 @@
                 aws: 'Amazon S3 (Simple Storage Service)', 
                 azure: 'Azure Blob Storage', 
                 gcp: 'Google Cloud Storage',
+                oci: 'OCI Object Storage',
                 comparison: {
                     summary: 'These services provide highly scalable and durable object storage for unstructured data. They are foundational for data lakes, static websites, and backups.',
                     key_differences: [
                         '<i>AWS</i> S3 is the market leader with a vast ecosystem, mature APIs, and a wide array of features like versioning and lifecycle policies.',
                         '<i>Azure</i> Blob Storage offers strong integration with Azure services and different access tiers optimized for cost and access frequency.',
-                        '<i>GCP</i> Cloud Storage offers a unified model where different access tiers are managed within the same service, with high performance and low latency.'
+                        '<i>GCP</i> Cloud Storage offers a unified model where different access tiers are managed within the same service, with high performance and low latency.',
+                        '<i>OCI</i> Object Storage provides high-performance, durable storage for unstructured data, optimized for large datasets and enterprise applications.'
                     ],
                     ecosystem_integrations: [
                         'All three services are deeply integrated with their respective data processing, AI/ML, and content delivery network (CDN) services.',
-                        'They act as the foundational storage layer for many other cloud services, including data lakes and backups.'
+                        'They act as the foundational storage layer for many other cloud services, including data lakes and backups.',
+                        '<i>OCI</i> Object Storage integrates with OCI Compute, Database, and Analytics services.'
                     ],
                     pricing_billing: [
                         'Pricing is based on a combination of factors: the amount of data stored (per GB), data retrieval (egress), and the number of operations (PUT, GET, etc.).',
-                        'Storage costs vary by access tier (Standard, Infrequent Access, Archive), with archive tiers having the lowest storage cost but high retrieval fees.'
+                        'Storage costs vary by access tier (Standard, Infrequent Access, Archive), with archive tiers having the lowest storage cost but high retrieval fees.',
+                        '<i>OCI</i> often has competitive pricing for object storage, especially with its Universal Credits model.'
                     ],
                     common_use_cases: [
                         'Data lakes, static website hosting, backups, and media storage.'
@@ -248,7 +270,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/s3/',
                         azure: 'https://azure.microsoft.com/en-us/services/storage/blobs/',
-                        gcp: 'https://cloud.google.com/storage/'
+                        gcp: 'https://cloud.google.com/storage/',
+                        oci: 'https://www.oracle.com/cloud/storage/object-storage/'
                     }
                 }
             },
@@ -258,14 +281,16 @@
                 aws: 'Amazon EBS (Elastic Block Store)', 
                 azure: 'Azure Managed Disks', 
                 gcp: 'Google Persistent Disk',
+                oci: 'OCI Block Volume',
                 comparison: {
                     summary: 'These services provide persistent, block-level storage volumes for virtual machines, acting like a physical hard drive. They are crucial for OS boot volumes and database storage.',
                     key_differences: [
                         'All three offer various volume types optimized for different performance needs (e.g., SSD for high I/O, HDD for general purpose).',
-                        'They are all tightly integrated with their respective VM services, offering options for encryption, snapshots, and resizing.'
+                        'They are all tightly integrated with their respective VM services, offering options for encryption, snapshots, and resizing.',
+                        '<i>OCI</i> Block Volume provides dynamic performance scaling and robust backup integration, ideal for databases and high-performance applications.'
                     ],
                     ecosystem_integrations: [
-                        'These services are essential for their respective virtual machine offerings (EC2, Virtual Machines, Compute Engine) and are often the primary storage for stateful applications and databases.'
+                        'These services are essential for their respective virtual machine offerings (EC2, Virtual Machines, Compute Engine, OCI Compute) and are often the primary storage for stateful applications and databases.'
                     ],
                     pricing_billing: [
                         'Pricing is primarily based on the volume size (GB/month) and the number of provisioned IOPS (I/O operations per second), as well as any snapshot storage.',
@@ -277,7 +302,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/ebs/',
                         azure: 'https://azure.microsoft.com/en-us/services/managed-disks/',
-                        gcp: 'https://cloud.google.com/persistent-disk/'
+                        gcp: 'https://cloud.google.com/persistent-disk/',
+                        oci: 'https://www.oracle.com/cloud/storage/block-volume/'
                     }
                 }
             },
@@ -287,15 +313,18 @@
                 aws: 'Amazon EFS (Elastic File System)', 
                 azure: 'Azure Files', 
                 gcp: 'Google Filestore',
+                oci: 'OCI File Storage',
                 comparison: {
                     summary: 'These are managed file storage services for applications that need a shared file system. They are often used for web content management, media processing, and home directories.',
                     key_differences: [
                         '<i>AWS</i> EFS is known for its elastic scalability, automatically growing and shrinking as you add or remove files.',
                         '<i>Azure</i> Files offers support for both SMB and NFS protocols, making it easier for traditional on-premises applications to migrate.',
-                        '<i>GCP</i> Filestore provides managed NFS file storage with different performance tiers on the GCP platform.'
+                        '<i>GCP</i> Filestore provides managed NFS file storage with different performance tiers on the GCP platform.',
+                        '<i>OCI</i> File Storage is a managed NFS service that provides a scalable and secure shared file system for OCI instances.'
                     ],
                     ecosystem_integrations: [
-                        'All three services are used for shared storage between multiple virtual machines and containers, and they are integrated with their respective networking and compute services.'
+                        'All three services are used for shared storage between multiple virtual machines and containers, and they are integrated with their respective networking and compute services.',
+                        '<i>OCI</i> File Storage integrates with OCI Compute and OKE for shared file system needs.'
                     ],
                     pricing_billing: [
                         'Pricing is typically based on the amount of data stored (GB/month) and often includes a separate cost for network transfer.',
@@ -307,7 +336,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/efs/',
                         azure: 'https://azure.microsoft.com/en-us/services/storage/files/',
-                        gcp: 'https://cloud.google.com/filestore/'
+                        gcp: 'https://cloud.google.com/filestore/',
+                        oci: 'https://www.oracle.com/cloud/storage/file-storage/'
                     }
                 }
             },
@@ -317,13 +347,15 @@
                 aws: 'Amazon S3 Glacier', 
                 azure: 'Azure Archive Storage', 
                 gcp: 'Google Cloud Storage Archive',
+                oci: 'OCI Archive Storage',
                 comparison: {
                     summary: 'These services are optimized for long-term, low-cost data storage with infrequent access. They are primarily used for compliance, regulatory, and disaster recovery purposes.',
                     key_differences: [
                         'The main differences lie in their retrieval options, with varying retrieval times from minutes to hours, depending on the tier chosen.',
                         '<i>AWS</i> S3 Glacier offers different retrieval options, from expedited (1-5 minutes) to standard and bulk.',
                         '<i>Azure</i> Archive Storage provides a low-cost, offline storage option.',
-                        '<i>GCP</i> Cloud Storage Archive offers similar functionality as a storage class within the Cloud Storage service.'
+                        '<i>GCP</i> Cloud Storage Archive offers similar functionality as a storage class within the Cloud Storage service.',
+                        '<i>OCI</i> Archive Storage is a low-cost, long-term storage solution for data that is rarely accessed, with retrieval times typically in hours.'
                     ],
                     ecosystem_integrations: [
                         'These services are integrated with their respective object storage and backup services for data lifecycle management and archival.'
@@ -338,7 +370,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/s3/storage-classes/glacier/',
                         azure: 'https://azure.microsoft.com/en-us/services/storage/archive-storage/',
-                        gcp: 'https://cloud.google.com/storage/docs/storage-classes#archive'
+                        gcp: 'https://cloud.google.com/storage/docs/storage-classes#archive',
+                        oci: 'https://www.oracle.com/cloud/storage/archive-storage/'
                     }
                 }
             },
@@ -348,20 +381,24 @@
                 aws: 'Amazon RDS & Aurora', 
                 azure: 'Azure SQL DB & DB for MySQL/PostgreSQL', 
                 gcp: 'Cloud SQL',
+                oci: 'OCI Database Service (MySQL HeatWave, PostgreSQL, Oracle DB)',
                 comparison: {
                     summary: 'These services provide managed relational database services, simplifying administration tasks like patching, backups, and high availability. They support popular database engines like MySQL, PostgreSQL, and SQL Server.',
                     key_differences: [
                         '<i>AWS</i> Aurora is a proprietary, MySQL and PostgreSQL-compatible relational database built for the cloud, offering higher performance and availability.',
                         '<i>Azure</i> SQL Database is a fully managed service for Microsoft SQL Server, with a serverless option that scales compute based on workload.',
-                        '<i>GCP</i> Cloud SQL is a fully managed database service for MySQL, PostgreSQL, and SQL Server, known for its simplicity and strong platform integration.'
+                        '<i>GCP</i> Cloud SQL is a fully managed database service for MySQL, PostgreSQL, and SQL Server, known for its simplicity and strong platform integration.',
+                        '<i>OCI</i> offers a range of managed relational databases, including MySQL HeatWave (with in-memory analytics), PostgreSQL, and its flagship Oracle Database Service, including Autonomous Database for self-managing capabilities.'
                     ],
                     ecosystem_integrations: [
                         'All three are deeply integrated with their respective virtual machine, container, and application hosting services.',
-                        'They also integrate with monitoring, logging, and security services for a complete solution.'
+                        'They also integrate with monitoring, logging, and security services for a complete solution.',
+                        '<i>OCI</i> databases are tightly integrated with other OCI services and offer unique multicloud options for running Oracle databases in AWS and Google Cloud environments.'
                     ],
                     pricing_billing: [
                         'Pricing is generally based on the size of the underlying VM instance, storage (GB/month), and I/O operations.',
-                        'Some serverless options, like Aurora Serverless and Azure SQL DB serverless, offer billing based on database capacity units or compute usage, scaling automatically with demand.'
+                        'Some serverless options, like Aurora Serverless and Azure SQL DB serverless, offer billing based on database capacity units or compute usage, scaling automatically with demand.',
+                        '<i>OCI</i> offers flexible pricing for its database services, including BYOL (Bring Your Own License) for Oracle Database, which can be cost-effective for existing Oracle customers.'
                     ],
                     common_use_cases: [
                         'Traditional web applications, business intelligence, and e-commerce platforms.'
@@ -369,7 +406,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/rds/',
                         azure: 'https://azure.microsoft.com/en-us/services/sql-database/',
-                        gcp: 'https://cloud.google.com/sql/'
+                        gcp: 'https://cloud.google.com/sql/',
+                        oci: 'https://www.oracle.com/cloud/database/'
                     }
                 }
             },
@@ -379,16 +417,19 @@
                 aws: 'Amazon DynamoDB', 
                 azure: 'Azure Cosmos DB', 
                 gcp: 'Cloud Firestore & Bigtable',
+                oci: 'OCI NoSQL Database Cloud Service',
                 comparison: {
                     summary: 'These services provide fast, flexible, and highly scalable databases for unstructured data, often used in mobile, gaming, and IoT applications.',
                     key_differences: [
                         '<i>AWS</i> DynamoDB is a fully managed key-value and document database designed for high-performance applications.',
                         '<i>Azure</i> Cosmos DB is a globally distributed, multi-model database that supports various APIs like SQL, MongoDB, and Cassandra.',
-                        '<i>GCP</i> offers Cloud Firestore for mobile and web apps and Cloud Bigtable for large-scale data analytics and high-throughput workloads.'
+                        '<i>GCP</i> offers Cloud Firestore for mobile and web apps and Cloud Bigtable for large-scale data analytics and high-throughput workloads.',
+                        '<i>OCI</i> NoSQL Database Cloud Service offers a fully managed, high-performance key-value and document database with predictable low latency.'
                     ],
                     ecosystem_integrations: [
                         'All are tightly integrated with their respective serverless, mobile, and IoT services for building modern applications.',
-                        'They also offer integrations with data processing services for analytics.'
+                        'They also offer integrations with data processing services for analytics.',
+                        '<i>OCI</i> NoSQL Database integrates with OCI Functions, Streaming, and other OCI services.'
                     ],
                     pricing_billing: [
                         'Pricing is typically based on provisioned throughput (read/write capacity units), the amount of data stored (GB/month), and data transfer.',
@@ -400,7 +441,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/dynamodb/',
                         azure: 'https://azure.microsoft.com/en-us/services/cosmos-db/',
-                        gcp: 'https://cloud.google.com/firestore/'
+                        gcp: 'https://cloud.google.com/firestore/',
+                        oci: 'https://www.oracle.com/cloud/database/nosql-database-cloud-service/'
                     }
                 }
             },
@@ -410,19 +452,23 @@
                 aws: 'Amazon Redshift', 
                 azure: 'Azure Synapse Analytics', 
                 gcp: 'Google BigQuery',
+                oci: 'OCI Autonomous Data Warehouse',
                 comparison: {
                     summary: 'These are fully managed, petabyte-scale data warehouse services designed for large-scale data analytics and business intelligence.',
                     key_differences: [
                         '<i>GCP</i> BigQuery is a serverless, highly scalable data warehouse that separates compute and storage, allowing for massive data analysis without managing infrastructure.',
                         '<i>AWS</i> Redshift is a cluster-based data warehouse solution that requires more upfront configuration and management but offers deep integration with the AWS ecosystem.',
-                        '<i>Azure</i> Synapse Analytics is a comprehensive analytics service that combines data warehousing, data integration, and big data analytics.'
+                        '<i>Azure</i> Synapse Analytics is a comprehensive analytics service that combines data warehousing, data integration, and big data analytics.',
+                        '<i>OCI</i> Autonomous Data Warehouse is a self-driving, self-securing, and self-repairing data warehouse service, leveraging machine learning to automate database management tasks.'
                     ],
                     ecosystem_integrations: [
-                        'All are tightly integrated with their respective data processing, BI, and AI/ML services for a complete analytics pipeline.'
+                        'All are tightly integrated with their respective data processing, BI, and AI/ML services for a complete analytics pipeline.',
+                        '<i>OCI</i> Autonomous Data Warehouse integrates with OCI Data Integration, Analytics Cloud, and other OCI services.'
                     ],
                     pricing_billing: [
                         '<i>BigQuery</i> is billed based on the amount of data processed by queries and the storage used.',
-                        '<i>Redshift</i> and <i>Synapse Analytics</i> are often based on the size of the cluster or data warehouse units, with separate costs for storage and data transfer.'
+                        '<i>Redshift</i> and <i>Synapse Analytics</i> are often based on the size of the cluster or data warehouse units, with separate costs for storage and data transfer.',
+                        '<i>OCI</i> Autonomous Data Warehouse pricing is based on OCPU consumption and storage, with options for "pay-per-use" or "bring your own license."'
                     ],
                     common_use_cases: [
                         'Business intelligence, large-scale data analytics, and reporting.'
@@ -430,7 +476,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/redshift/',
                         azure: 'https://azure.microsoft.com/en-us/services/synapse-analytics/',
-                        gcp: 'https://cloud.google.com/bigquery/'
+                        gcp: 'https://cloud.google.com/bigquery/',
+                        oci: 'https://www.oracle.com/cloud/database/autonomous-data-warehouse/'
                     }
                 }
             },
@@ -440,11 +487,13 @@
                 aws: 'Amazon ElastiCache', 
                 azure: 'Azure Cache for Redis', 
                 gcp: 'Cloud Memorystore',
+                oci: 'OCI Cache with Redis',
                 comparison: {
                     summary: 'These services provide managed in-memory data stores to improve application performance by reducing the load on databases and providing low-latency data access.',
                     key_differences: [
                         '<i>AWS</i> ElastiCache supports both Memcached and Redis engines, giving you flexibility in your caching strategy.',
-                        '<i>Azure</i> Cache for Redis and <i>GCP</i> Memorystore are fully managed Redis services, offering seamless integration with their respective platforms and simplifying administration.'
+                        '<i>Azure</i> Cache for Redis and <i>GCP</i> Memorystore are fully managed Redis services, offering seamless integration with their respective platforms and simplifying administration.',
+                        '<i>OCI</i> Cache with Redis offers a fully managed, highly available, and scalable Redis caching service.'
                     ],
                     ecosystem_integrations: [
                         'These services are commonly used in conjunction with relational and NoSQL databases to accelerate read-heavy workloads and improve application performance.'
@@ -459,7 +508,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/elasticache/',
                         azure: 'https://azure.microsoft.com/en-us/services/cache/',
-                        gcp: 'https://cloud.google.com/memorystore/'
+                        gcp: 'https://cloud.google.com/memorystore/',
+                        oci: 'https://www.oracle.com/cloud/database/redis/'
                     }
                 }
             },
@@ -469,17 +519,20 @@
                 aws: 'Amazon VPC (Virtual Private Cloud)', 
                 azure: 'Azure Virtual Network', 
                 gcp: 'Google VPC (Virtual Private Cloud)',
+                oci: 'OCI Virtual Cloud Network (VCN)',
                 comparison: {
                     summary: 'These services provide isolated network environments within the cloud, allowing you to define your own IP address ranges, subnets, and routing tables.',
                     key_differences: [
                         'A key architectural difference is that <i>GCP</i>\'s VPCs are global, meaning a single VPC can span multiple regions. This simplifies networking and eliminates the need for complex peering.',
-                        'In contrast, <i>AWS</i> VPCs and <i>Azure</i> VNets are regional, requiring peering or other networking solutions to connect resources across different regions.'
+                        'In contrast, <i>AWS</i> VPCs and <i>Azure</i> VNets are regional, requiring peering or other networking solutions to connect resources across different regions.',
+                        '<i>OCI</i> Virtual Cloud Network (VCN) provides a customizable and private network in OCI, offering strong isolation and high-bandwidth connectivity, similar to an on-premises data center network.'
                     ],
                     ecosystem_integrations: [
                         'These are the foundational networking services for all other resources, tightly integrated with compute, storage, and security services.'
                     ],
                     pricing_billing: [
-                        'There is generally no cost for the virtual network itself, but there are charges for network egress (data transfer out of the network), peering connections, and other advanced networking features.'
+                        'There is generally no cost for the virtual network itself, but there are charges for network egress (data transfer out of the network), peering connections, and other advanced networking features.',
+                        '<i>OCI</i> offers competitive egress pricing, including a significant free tier for outbound data transfer.'
                     ],
                     common_use_cases: [
                         'Creating isolated and secure environments for applications, hybrid cloud connections, and network segmentation.'
@@ -487,7 +540,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/vpc/',
                         azure: 'https://azure.microsoft.com/en-us/services/virtual-network/',
-                        gcp: 'https://cloud.google.com/vpc/'
+                        gcp: 'https://cloud.google.com/vpc/',
+                        oci: 'https://www.oracle.com/cloud/networking/virtual-cloud-network/'
                     }
                 }
             },
@@ -497,11 +551,13 @@
                 aws: 'Amazon Route 53', 
                 azure: 'Azure DNS', 
                 gcp: 'Cloud DNS',
+                oci: 'OCI DNS Management',
                 comparison: {
                     summary: 'These are scalable and reliable DNS services for domain registration, routing, and management. They are essential for directing traffic to your cloud applications.',
                     key_differences: [
                         '<i>AWS</i> Route 53 is known for its wide range of routing policies (e.g., latency-based, geo-based) and deep integration with AWS services.',
-                        '<i>Azure</i> DNS and <i>GCP</i> Cloud DNS offer similar features with strong platform integration, providing a cost-effective and performant DNS solution for their respective cloud ecosystems.'
+                        '<i>Azure</i> DNS and <i>GCP</i> Cloud DNS offer similar features with strong platform integration, providing a cost-effective and performant DNS solution for their respective cloud ecosystems.',
+                        '<i>OCI</i> DNS Management provides a highly available and scalable DNS service with global Anycast network for low latency and high reliability.'
                     ],
                     ecosystem_integrations: [
                         'These services integrate with load balancers, virtual networks, and other compute services to provide a complete DNS resolution and traffic routing solution.'
@@ -516,7 +572,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/route53/',
                         azure: 'https://azure.microsoft.com/en-us/services/dns/',
-                        gcp: 'https://cloud.google.com/dns/'
+                        gcp: 'https://cloud.google.com/dns/',
+                        oci: 'https://www.oracle.com/cloud/networking/dns/'
                     }
                 }
             },
@@ -526,14 +583,16 @@
                 aws: 'Amazon CloudFront', 
                 azure: 'Azure CDN', 
                 gcp: 'Cloud CDN',
+                oci: 'OCI Content Delivery Network (CDN)',
                 comparison: {
                     summary: 'These CDNs are used to accelerate content delivery by caching it at edge locations around the world, reducing latency and improving user experience.',
                     key_differences: [
                         '<i>AWS</i> CloudFront has a vast and mature network of edge locations and is deeply integrated with other AWS services like S3 and EC2.',
-                        '<i>Azure</i> CDN and <i>GCP</i> Cloud CDN offer similar capabilities with seamless integration into their respective storage and application services, making them a natural choice for applications on those platforms.'
+                        '<i>Azure</i> CDN and <i>GCP</i> Cloud CDN offer similar capabilities with seamless integration into their respective storage and application services, making them a natural choice for applications on those platforms.',
+                        '<i>OCI</i> CDN provides global content delivery with robust security features and integration with OCI Object Storage.'
                     ],
                     ecosystem_integrations: [
-                        'These services integrate with object storage (S3, Blob, Cloud Storage) and web application firewalls for security.'
+                        'These services integrate with object storage (S3, Blob, Cloud Storage, OCI Object Storage) and web application firewalls for security.'
                     ],
                     pricing_billing: [
                         'Pricing is primarily based on the amount of data transferred (egress) from the edge locations, with costs varying by region.',
@@ -545,7 +604,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/cloudfront/',
                         azure: 'https://azure.microsoft.com/en-us/services/cdn/',
-                        gcp: 'https://cloud.google.com/cdn/'
+                        gcp: 'https://cloud.google.com/cdn/',
+                        oci: 'https://www.oracle.com/cloud/networking/content-delivery-network/'
                     }
                 }
             },
@@ -555,12 +615,14 @@
                 aws: 'Elastic Load Balancing (ELB)', 
                 azure: 'Azure Load Balancer & Application Gateway', 
                 gcp: 'Cloud Load Balancing',
+                oci: 'OCI Load Balancing',
                 comparison: {
                     summary: 'These services distribute incoming application traffic across multiple targets to improve application scalability, availability, and fault tolerance.',
                     key_differences: [
                         '<i>AWS</i> ELB offers several types of load balancers (Application, Network, Gateway) to handle different traffic needs.',
                         '<i>GCP</i> Cloud Load Balancing is a single, global service that handles traffic distribution across regions and even continents, simplifying global deployments.',
-                        '<i>Azure</i> offers two main services: Load Balancer for Layer 4 traffic and Application Gateway for Layer 7 traffic with advanced routing features.'
+                        '<i>Azure</i> offers two main services: Load Balancer for Layer 4 traffic and Application Gateway for Layer 7 traffic with advanced routing features.',
+                        '<i>OCI</i> Load Balancing distributes incoming traffic across backend servers, supporting both public and private load balancers with flexible shapes.'
                     ],
                     ecosystem_integrations: [
                         'These services are essential for building highly available and scalable applications and integrate with their respective virtual machine and container services.'
@@ -575,7 +637,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/elasticloadbalancing/',
                         azure: 'https://azure.microsoft.com/en-us/services/load-balancer/',
-                        gcp: 'https://cloud.google.com/load-balancing/'
+                        gcp: 'https://cloud.google.com/load-balancing/',
+                        oci: 'https://www.oracle.com/cloud/networking/load-balancing/'
                     }
                 }
             },
@@ -585,15 +648,17 @@
                 aws: 'AWS IAM', 
                 azure: 'Azure Active Directory (Azure AD)', 
                 gcp: 'Google Cloud IAM',
+                oci: 'OCI Identity and Access Management (IAM)',
                 comparison: {
                     summary: 'These services provide granular identity and access management for cloud resources, allowing you to control who can do what within your cloud environment.',
                     key_differences: [
                         '<i>AWS</i> IAM is a granular system for defining users, groups, and roles to manage access to AWS resources.',
                         '<i>Azure</i> Active Directory (Azure AD) is a comprehensive identity solution that is often integrated with on-premises Active Directory and is used for both cloud and on-premises access management.',
-                        '<i>GCP</i> IAM is a resource-hierarchical system that lets you define permissions at the project, folder, or organization level, providing a powerful way to manage access at scale.'
+                        '<i>GCP</i> IAM is a resource-hierarchical system that lets you define permissions at the project, folder, or organization level, providing a powerful way to manage access at scale.',
+                        '<i>OCI</i> IAM provides fine-grained access control with policies that specify who can access which OCI resources, supporting a compartment-based security model.'
                     ],
                     ecosystem_integrations: [
-                        'All three services are foundational to their respective cloud platforms and integrate with every other service to control access and permissions.'
+                        'All four services are foundational to their respective cloud platforms and integrate with every other service to control access and permissions.'
                     ],
                     pricing_billing: [
                         'Core IAM functionality is typically included with your cloud account at no additional charge.',
@@ -605,7 +670,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/iam/',
                         azure: 'https://azure.microsoft.com/en-us/services/active-directory/',
-                        gcp: 'https://cloud.google.com/iam/'
+                        gcp: 'https://cloud.google.com/iam/',
+                        oci: 'https://www.oracle.com/cloud/security/identity-management/'
                     }
                 }
             },
@@ -615,12 +681,14 @@
                 aws: 'AWS IAM Identity Center (formerly AWS SSO), Amazon Cognito',
                 azure: 'Azure Active Directory (Azure AD)',
                 gcp: 'Cloud Identity',
+                oci: 'OCI Identity and Access Management (IAM) - Federation',
                 comparison: {
                     summary: 'These services provide identity and access management solutions for your workforce, enabling single sign-on (SSO) and centralized user management across your organization.',
                     key_differences: [
                         '<i>AWS</i> IAM Identity Center offers a cloud-based single sign-on service that makes it easy to centrally manage SSO access to multiple AWS accounts and business applications.',
                         '<i>Azure</i> AD is a comprehensive, cloud-based identity and access management service. It provides SSO, multi-factor authentication, and conditional access for applications and resources.',
-                        '<i>GCP</i> Cloud Identity provides a unified identity management service for all Google Cloud and enterprise applications, including other cloud providers. It offers a secure and flexible solution for managing user identities.'
+                        '<i>GCP</i> Cloud Identity provides a unified identity management service for all Google Cloud and enterprise applications, including other cloud providers. It offers a secure and flexible solution for managing user identities.',
+                        '<i>OCI</i> IAM supports federation with external identity providers (e.g., Microsoft Active Directory, Okta) to enable SSO for workforce users accessing OCI and other applications.'
                     ],
                     ecosystem_integrations: [
                         'These services are deeply integrated with their respective cloud platforms and are used to provide access to a wide range of cloud resources and third-party applications.'
@@ -634,7 +702,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/iam/features/sso/',
                         azure: 'https://azure.microsoft.com/en-us/services/active-directory/',
-                        gcp: 'https://cloud.google.com/identity/'
+                        gcp: 'https://cloud.google.com/identity/',
+                        oci: 'https://www.oracle.com/cloud/security/identity-management/federation/'
                     }
                 }
             },
@@ -644,15 +713,18 @@
                 aws: 'AWS Glue, Amazon EMR', 
                 azure: 'Azure Data Factory, Azure Databricks', 
                 gcp: 'Cloud Dataflow, Cloud Dataproc',
+                oci: 'OCI Data Flow, OCI Data Integration',
                 comparison: {
                     summary: 'These services provide tools for data processing and ETL (Extract, Transform, Load) tasks, often supporting popular open-source frameworks like Apache Spark and Hadoop.',
                     key_differences: [
                         '<i>GCP</i> Cloud Dataflow is particularly strong for streaming and batch processing with a unified programming model, making it a flexible tool for real-time analytics.',
                         '<i>AWS</i> Glue is a fully managed ETL service, while Amazon EMR offers a managed Hadoop framework for big data processing.',
-                        '<i>Azure</i> Data Factory provides a data integration service for building ETL pipelines, and Azure Databricks offers a collaborative, Apache Spark-based platform.'
+                        '<i>Azure</i> Data Factory provides a data integration service for building ETL pipelines, and Azure Databricks offers a collaborative, Apache Spark-based platform.',
+                        '<i>OCI</i> Data Flow is a fully managed Apache Spark service for big data processing, and OCI Data Integration provides ETL/ELT capabilities.'
                     ],
                     ecosystem_integrations: [
-                        'All of these services integrate with their respective cloud storage and data warehouse services to form a complete data processing pipeline.'
+                        'All of these services integrate with their respective cloud storage and data warehouse services to form a complete data processing pipeline.',
+                        '<i>OCI</i> Data Flow and Data Integration integrate with OCI Object Storage, Autonomous Database, and other OCI data services.'
                     ],
                     pricing_billing: [
                         'Pricing is typically based on the duration of compute resources used, with some services billing by data processed.',
@@ -664,7 +736,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/big-data/datalakes-and-analytics/',
                         azure: 'https://azure.microsoft.com/en-us/solutions/big-data-analytics/',
-                        gcp: 'https://cloud.google.com/solutions/big-data/'
+                        gcp: 'https://cloud.google.com/solutions/big-data/',
+                        oci: 'https://www.oracle.com/cloud/data-flow/'
                     }
                 }
             },
@@ -674,15 +747,17 @@
                 aws: 'Amazon SageMaker', 
                 azure: 'Azure Machine Learning', 
                 gcp: 'Vertex AI',
+                oci: 'OCI Data Science, OCI AI Services',
                 comparison: {
                     summary: 'These services are managed platforms for building, training, and deploying machine learning models at scale, aimed at both data scientists and developers.',
                     key_differences: [
                         '<i>AWS</i> SageMaker has a wide range of pre-built algorithms, notebooks, and tools for every step of the ML workflow, making it a comprehensive platform.',
                         '<i>GCP</i> Vertex AI is a unified platform for ML development that integrates tools for data labeling, model training, and serving with a focus on ease of use and scalability.',
-                        '<i>Azure</i> Machine Learning is a robust platform that offers a powerful development environment and strong integration with other Azure data and compute services.'
+                        '<i>Azure</i> Machine Learning is a robust platform that offers a powerful development environment and strong integration with other Azure data and compute services.',
+                        '<i>OCI</i> Data Science provides a managed environment for data scientists to build, train, and deploy ML models, while OCI AI Services offer pre-built AI capabilities like Vision, Language, and Speech.'
                     ],
                     ecosystem_integrations: [
-                        'All three platforms offer deep integrations with their respective data storage, compute, and model serving services for a complete ML lifecycle management.'
+                        'All four platforms offer deep integrations with their respective data storage, compute, and model serving services for a complete ML lifecycle management.'
                     ],
                     pricing_billing: [
                         'Pricing is based on the compute resources used for model training and deployment, as well as the storage consumed by models and datasets.',
@@ -694,7 +769,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/sagemaker/',
                         azure: 'https://azure.microsoft.com/en-us/services/machine-learning/',
-                        gcp: 'https://cloud.google.com/vertex-ai/'
+                        gcp: 'https://cloud.google.com/vertex-ai/',
+                        oci: 'https://www.oracle.com/cloud/data-science/'
                     }
                 }
             },
@@ -704,11 +780,13 @@
                 aws: 'AWS Lake Formation', 
                 azure: 'Azure Data Lake Storage', 
                 gcp: 'Cloud Storage (used as data lake)',
+                oci: 'OCI Data Lake (Object Storage, Data Catalog, Data Flow)',
                 comparison: {
                     summary: 'Data lake services provide a centralized repository for storing large amounts of raw data in its native format, enabling flexible analytics and AI workloads.',
                     key_differences: [
                         '<i>AWS</i> Lake Formation and <i>Azure</i> Data Lake Storage are dedicated services for building and managing data lakes with integrated security and governance.',
-                        '<i>GCP</i> uses its general-purpose object storage service, Cloud Storage, as the foundation for data lakes, leveraging its performance and durability as a flexible, scalable data platform.'
+                        '<i>GCP</i> uses its general-purpose object storage service, Cloud Storage, as the foundation for data lakes, leveraging its performance and durability as a flexible, scalable data platform.',
+                        '<i>OCI</i> leverages OCI Object Storage as its primary data lake storage, complemented by OCI Data Catalog for metadata management and OCI Data Flow for processing.'
                     ],
                     ecosystem_integrations: [
                         'These services integrate with data processing engines, data warehouses, and BI tools to provide a complete analytics solution.'
@@ -723,7 +801,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/lake-formation/',
                         azure: 'https://azure.microsoft.com/en-us/services/storage/data-lake-storage/',
-                        gcp: 'https://cloud.google.com/data-lake-solution/'
+                        gcp: 'https://cloud.google.com/data-lake-solution/',
+                        oci: 'https://www.oracle.com/cloud/data-lake/'
                     }
                 }
             },
@@ -733,12 +812,14 @@
                 aws: 'Amazon CloudWatch',
                 azure: 'Azure Monitor',
                 gcp: 'Google Cloud Operations Suite',
+                oci: 'OCI Monitoring, OCI Logging, OCI Operations Insights',
                 comparison: {
                     summary: 'These services provide a comprehensive suite of tools for monitoring, logging, and tracing applications and infrastructure. They are crucial for maintaining the health and performance of cloud environments.',
                     key_differences: [
                         '<i>AWS</i> CloudWatch offers metrics collection, alarms, and dashboards. It is tightly integrated with all AWS services, providing a single pane of glass for monitoring your infrastructure.',
                         '<i>Azure</i> Monitor provides comprehensive data collection from applications, OS, and resources, with deep analytics and visualization. It includes features like Application Insights for code-level monitoring and Log Analytics for powerful querying.',
-                        '<i>GCP</i> Cloud Operations Suite (formerly Stackdriver) combines logging, monitoring, tracing, and error reporting into a single, unified platform, making it easy to troubleshoot and debug applications.'
+                        '<i>GCP</i> Cloud Operations Suite (formerly Stackdriver) combines logging, monitoring, tracing, and error reporting into a single, unified platform, making it easy to troubleshoot and debug applications.',
+                        '<i>OCI</i> Monitoring collects metrics, <i>OCI</i> Logging centralizes logs, and <i>OCI</i> Operations Insights provides AI/ML-driven insights for performance and capacity planning, especially for Oracle workloads.'
                     ],
                     ecosystem_integrations: [
                         'All of these services are deeply integrated with their respective cloud provider\'s compute, networking, and storage services to provide real-time performance and health insights.'
@@ -753,7 +834,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/cloudwatch/',
                         azure: 'https://azure.microsoft.com/en-us/services/monitor/',
-                        gcp: 'https://cloud.google.com/operations/'
+                        gcp: 'https://cloud.google.com/operations/',
+                        oci: 'https://www.oracle.com/cloud/observability-management/'
                     }
                 }
             },
@@ -763,12 +845,14 @@
                 aws: 'AWS CloudFormation',
                 azure: 'Azure Resource Manager (ARM)',
                 gcp: 'Google Cloud Deployment Manager',
+                oci: 'OCI Resource Manager (Terraform)',
                 comparison: {
                     summary: 'These services allow you to define, deploy, and manage your cloud infrastructure using configuration files as code, enabling automation and consistency.',
                     key_differences: [
                         '<i>AWS</i> CloudFormation uses templates to define a collection of AWS resources and provisions them in an orderly and predictable way. It is a declarative service deeply integrated with the AWS ecosystem.',
                         '<i>Azure</i> Resource Manager (ARM) is a management layer that enables you to create, update, and delete resources in your Azure subscription. ARM templates define your infrastructure in a declarative format.',
-                        '<i>GCP</i> Cloud Deployment Manager provides a similar service for creating and managing GCP resources. It uses YAML and Python or Jinja2 templates to define resource dependencies and configurations.'
+                        '<i>GCP</i> Cloud Deployment Manager provides a similar service for creating and managing GCP resources. It uses YAML and Python or Jinja2 templates to define resource dependencies and configurations.',
+                        '<i>OCI</i> Resource Manager is a managed service that allows you to automate the deployment and management of OCI resources using Terraform configurations.'
                     ],
                     ecosystem_integrations: [
                         'These services are tightly integrated with their respective cloud platforms and are the primary way to automate infrastructure provisioning.'
@@ -782,7 +866,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/cloudformation/',
                         azure: 'https://azure.microsoft.com/en-us/services/azure-resource-manager/',
-                        gcp: 'https://cloud.google.com/deployment-manager/'
+                        gcp: 'https://cloud.google.com/deployment-manager/',
+                        oci: 'https://www.oracle.com/cloud/resource-manager/'
                     }
                 }
             },
@@ -792,12 +877,14 @@
                 aws: 'AWS Systems Manager',
                 azure: 'Azure Automation',
                 gcp: 'Google Cloud OS Config',
+                oci: 'OCI OS Management',
                 comparison: {
                     summary: 'These services help you automate the configuration and management of your virtual machines and servers, ensuring consistency and compliance across your fleet.',
                     key_differences: [
                         '<i>AWS</i> Systems Manager provides a unified interface for managing operational data and automating tasks across your AWS resources. It includes features like Patch Manager, Run Command, and State Manager.',
                         '<i>Azure</i> Automation is a cloud-based automation and configuration management service that supports PowerShell and Python runbooks for task automation and Desired State Configuration (DSC) for consistent server configuration.',
-                        '<i>GCP</i> Cloud OS Config automates OS configurations and patches, ensuring that your VM instances are up-to-date and compliant with your policies. It supports both Linux and Windows instances.'
+                        '<i>GCP</i> Cloud OS Config automates OS configurations and patches, ensuring that your VM instances are up-to-date and compliant with your policies. It supports both Linux and Windows instances.',
+                        '<i>OCI</i> OS Management helps you manage and automate operating system configurations, patches, and updates for OCI compute instances.'
                     ],
                     ecosystem_integrations: [
                         'These services integrate with virtual machines and other compute resources to manage their state and configuration over time.'
@@ -812,7 +899,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/systems-manager/',
                         azure: 'https://azure.microsoft.com/en-us/services/automation/',
-                        gcp: 'https://cloud.google.com/compute/docs/os-config/'
+                        gcp: 'https://cloud.google.com/compute/docs/os-config/',
+                        oci: 'https://www.oracle.com/cloud/os-management/'
                     }
                 }
             },
@@ -822,12 +910,14 @@
                 aws: 'AWS CodeBuild, AWS CodePipeline',
                 azure: 'Azure Pipelines',
                 gcp: 'Cloud Build',
+                oci: 'OCI DevOps',
                 comparison: {
                     summary: 'These services provide tools for continuous integration and continuous delivery (CI/CD) by automating the process of building, testing, and deploying your code.',
                     key_differences: [
                         '<i>AWS</i> CodeBuild is a fully managed build service that compiles source code, runs unit tests, and produces deployable artifacts. It is part of the larger AWS CodePipeline for end-to-end CI/CD.',
                         '<i>Azure</i> Pipelines is a feature of Azure DevOps that automatically builds and tests code projects and supports a wide variety of languages and application types.',
-                        '<i>GCP</i> Cloud Build is a serverless CI/CD platform that executes your builds on GCP. It can import code from various repositories and build a variety of artifacts, including container images.'
+                        '<i>GCP</i> Cloud Build is a serverless CI/CD platform that executes your builds on GCP. It can import code from various repositories and build a variety of artifacts, including container images.',
+                        '<i>OCI</i> DevOps is a complete CI/CD platform that helps automate development and deployment workflows on OCI.'
                     ],
                     ecosystem_integrations: [
                         'These services integrate with source code repositories like GitHub and Bitbucket, as well as with their respective cloud deployment and container services.'
@@ -842,7 +932,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/codepipeline/',
                         azure: 'https://azure.microsoft.com/en-us/services/devops/pipelines/',
-                        gcp: 'https://cloud.google.com/cloud-build/'
+                        gcp: 'https://cloud.google.com/cloud-build/',
+                        oci: 'https://www.oracle.com/cloud/devops/'
                     }
                 }
             },
@@ -852,12 +943,14 @@
                 aws: 'Amazon ECR (Elastic Container Registry)',
                 azure: 'Azure Container Registry',
                 gcp: 'Google Artifact Registry',
+                oci: 'OCI Container Registry (OCIR)',
                 comparison: {
                     summary: 'These services provide a secure, private registry for storing and managing your container images and other software artifacts, enabling a streamlined development workflow.',
                     key_differences: [
                         '<i>AWS</i> ECR is a fully managed Docker container registry that is integrated with AWS services like ECS and EKS, providing a simple way to store and manage images for your containerized applications.',
                         '<i>Azure</i> Container Registry is a private, managed Docker registry that is deeply integrated with Azure\'s container platforms and developer tools.',
-                        '<i>GCP</i> Artifact Registry is a single, unified registry for storing both container images and other package formats (e.g., Maven, npm), replacing the older Container Registry service and providing a more flexible solution.'
+                        '<i>GCP</i> Artifact Registry is a single, unified registry for storing both container images and other package formats (e.g., Maven, npm), replacing the older Container Registry service and providing a more flexible solution.',
+                        '<i>OCI</i> Container Registry (OCIR) is a highly available and scalable Docker V2 compliant registry for storing and managing container images.'
                     ],
                     ecosystem_integrations: [
                         'These services are essential for containerized workflows and integrate with their respective CI/CD and orchestration services.'
@@ -872,7 +965,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/ecr/',
                         azure: 'https://azure.microsoft.com/en-us/services/container-registry/',
-                        gcp: 'https://cloud.google.com/artifact-registry/'
+                        gcp: 'https://cloud.google.com/artifact-registry/',
+                        oci: 'https://www.oracle.com/cloud/container-registry/'
                     }
                 }
             },
@@ -882,12 +976,14 @@
                 aws: 'AWS WAF & AWS Shield',
                 azure: 'Azure Application Gateway (with WAF) & Azure DDoS Protection',
                 gcp: 'Google Cloud Armor',
+                oci: 'OCI Web Application Firewall (WAF), OCI DDoS Protection',
                 comparison: {
                     summary: 'These services protect web applications and network resources from common exploits and denial-of-service (DDoS) attacks, ensuring high availability and security.',
                     key_differences: [
                         '<i>AWS</i> WAF allows you to create custom rules to filter web traffic, while AWS Shield provides managed DDoS protection, with a standard tier included for all AWS customers.',
                         '<i>Azure</i> Application Gateway provides a web application firewall (WAF) to protect against web attacks. Azure DDoS Protection offers enhanced mitigation capabilities for network-layer attacks.',
-                        '<i>GCP</i> Cloud Armor is a security service that provides WAF and DDoS protection to defend applications running on Google Cloud, leveraging Google’s global network.'
+                        '<i>GCP</i> Cloud Armor is a security service that provides WAF and DDoS protection to defend applications running on Google Cloud, leveraging Google’s global network.',
+                        '<i>OCI</i> WAF protects web applications from common cyber threats, and OCI provides built-in DDoS protection for all services.'
                     ],
                     ecosystem_integrations: [
                         'These services integrate with load balancers, CDNs, and other networking services to protect incoming traffic.'
@@ -902,7 +998,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/waf/',
                         azure: 'https://azure.microsoft.com/en-us/services/web-application-firewall/',
-                        gcp: 'https://cloud.google.com/armor/'
+                        gcp: 'https://cloud.google.com/armor/',
+                        oci: 'https://www.oracle.com/cloud/security/web-application-firewall/'
                     }
                 }
             },
@@ -912,12 +1009,14 @@
                 aws: 'AWS KMS (Key Management Service)',
                 azure: 'Azure Key Vault',
                 gcp: 'Google Cloud KMS (Key Management Service)',
+                oci: 'OCI Vault',
                 comparison: {
                     summary: 'These services provide a centralized and secure way to manage cryptographic keys used to encrypt data and other cloud resources, ensuring data protection and compliance.',
                     key_differences: [
                         'All three services provide a managed, highly available way to create, store, and manage encryption keys.',
                         'They are all integrated with hardware security modules (HSMs) to protect your keys.',
-                        'The services are tightly integrated with other cloud services on their respective platforms, making it easy to encrypt data at rest and in transit.'
+                        'The services are tightly integrated with other cloud services on their respective platforms, making it easy to encrypt data at rest and in transit.',
+                        '<i>OCI</i> Vault provides a centralized service for managing encryption keys and secrets, backed by FIPS 140-2 Level 3 certified HSMs.'
                     ],
                     ecosystem_integrations: [
                         'These services are essential for a variety of services, including database encryption, object storage encryption, and virtual machine encryption.'
@@ -932,7 +1031,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/kms/',
                         azure: 'https://azure.microsoft.com/en-us/services/key-vault/',
-                        gcp: 'https://cloud.google.com/kms/'
+                        gcp: 'https://cloud.google.com/kms/',
+                        oci: 'https://www.oracle.com/cloud/security/vault/'
                     }
                 }
             },
@@ -942,12 +1042,14 @@
                 aws: 'AWS Config, AWS Audit Manager',
                 azure: 'Azure Policy, Microsoft Purview',
                 gcp: 'Google Cloud Security Command Center',
+                oci: 'OCI Cloud Guard, OCI Security Zones',
                 comparison: {
                     summary: 'These services help you automate compliance checks, audit your cloud environment, and enforce security policies to meet industry standards and internal governance requirements.',
                     key_differences: [
                         '<i>AWS</i> Config tracks resource changes and a desired configuration. AWS Audit Manager simplifies the process of auditing your cloud usage for compliance.',
                         '<i>Azure</i> Policy allows you to create, assign, and manage policy definitions to enforce resource governance. Microsoft Purview provides a comprehensive view of your data estate to manage governance.',
-                        '<i>GCP</i> Cloud Security Command Center is a centralized platform for security and risk management, helping you to find, assess, and fix security vulnerabilities.'
+                        '<i>GCP</i> Cloud Security Command Center is a centralized platform for security and risk management, helping you to find, assess, and fix security vulnerabilities.',
+                        '<i>OCI</i> Cloud Guard continuously monitors and enforces security posture, while OCI Security Zones enforce security best practices for resource creation and modification.'
                     ],
                     ecosystem_integrations: [
                         'These services are integrated with IAM and other security tools to provide a complete picture of your security and compliance posture.'
@@ -962,7 +1064,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/compliance/',
                         azure: 'https://azure.microsoft.com/en-us/solutions/security-compliance/',
-                        gcp: 'https://cloud.google.com/security-command-center/'
+                        gcp: 'https://cloud.google.com/security-command-center/',
+                        oci: 'https://www.oracle.com/cloud/security/cloud-guard/'
                     }
                 }
             },
@@ -972,12 +1075,14 @@
                 aws: 'AWS Secrets Manager',
                 azure: 'Azure Key Vault',
                 gcp: 'Google Cloud Secret Manager',
+                oci: 'OCI Vault (Secrets Management)',
                 comparison: {
                     summary: 'These services provide a secure way to store, manage, and rotate sensitive information like database credentials, API keys, and other secrets, reducing the risk of hard-coding them in your applications.',
                     key_differences: [
                         '<i>AWS</i> Secrets Manager allows you to easily rotate credentials for supported databases, simplifying security management.',
                         '<i>Azure</i> Key Vault provides a secure storage for keys, secrets, and certificates. Secrets are versioned and can be retrieved using a REST API.',
-                        '<i>GCP</i> Cloud Secret Manager is a fully managed service that provides a central, secure location to store and manage secrets, with features like automatic rotation and access control.'
+                        '<i>GCP</i> Cloud Secret Manager is a fully managed service that provides a central, secure location to store and manage secrets, with features like automatic rotation and access control.',
+                        '<i>OCI</i> Vault provides secure storage and management for secrets, including automatic rotation for database credentials.'
                     ],
                     ecosystem_integrations: [
                         'These services are used by applications running on virtual machines, containers, and serverless functions to securely retrieve credentials and other sensitive information at runtime.'
@@ -992,7 +1097,8 @@
                     links: {
                         aws: 'https://aws.amazon.com/secrets-manager/',
                         azure: 'https://azure.microsoft.com/en-us/services/key-vault/',
-                        gcp: 'https://cloud.google.com/secret-manager/'
+                        gcp: 'https://cloud.google.com/secret-manager/',
+                        oci: 'https://www.oracle.com/cloud/security/vault/'
                     }
                 }
             },
@@ -1033,7 +1139,8 @@
                     service.subCategory.toLowerCase().includes(searchTerm) ||
                     service.aws.toLowerCase().includes(searchTerm) ||
                     service.azure.toLowerCase().includes(searchTerm) ||
-                    service.gcp.toLowerCase().includes(searchTerm);
+                    service.gcp.toLowerCase().includes(searchTerm) ||
+                    (service.oci && service.oci.toLowerCase().includes(searchTerm)); // Include OCI in search
                 return matchesCategory && matchesSearch;
             });
 
@@ -1060,6 +1167,10 @@
                             <div class="flex items-start">
                                 <span class="font-bold w-16 text-sm flex-shrink-0">GCP:</span>
                                 <span class="text-sm">${service.gcp}</span>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="font-bold w-16 text-sm flex-shrink-0">OCI:</span>
+                                <span class="text-sm">${service.oci}</span>
                             </div>
                         </div>
                         <div class="mt-4">
@@ -1130,6 +1241,7 @@
                     <a href="${service.comparison.links.aws}" target="_blank" class="flex-1 text-center py-2 px-4 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition">AWS Docs</a>
                     <a href="${service.comparison.links.azure}" target="_blank" class="flex-1 text-center py-2 px-4 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition">Azure Docs</a>
                     <a href="${service.comparison.links.gcp}" target="_blank" class="flex-1 text-center py-2 px-4 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition">GCP Docs</a>
+                    <a href="${service.comparison.links.oci}" target="_blank" class="flex-1 text-center py-2 px-4 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition">OCI Docs</a>
                 `;
 
                 mainView.classList.add('hidden');
