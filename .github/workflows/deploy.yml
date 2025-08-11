@@ -1,0 +1,32 @@
+name: Deploy to App Engine
+
+on:
+  push:
+    branches:
+      - main # This workflow runs when changes are pushed to the 'main' branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest # Use the latest Ubuntu runner
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 # Action to check out your repository code
+
+      - name: Authenticate to Google Cloud
+        id: 'auth'
+        uses: 'google-github-actions/auth@v2' # Action to authenticate with GCP
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }} # Use the secret you created
+
+      - name: Set up Cloud SDK
+        uses: 'google-github-actions/setup-gcloud@v2' # Action to set up gcloud CLI
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }} # Replace with your actual GCP Project ID
+
+      - name: Deploy to App Engine
+        run: gcloud app deploy app.yaml --version=v1 --quiet # Deploy your app.yaml
+        # --version: Optional. Specifies a version ID. If omitted, one is generated.
+        # --quiet: Optional. Suppresses prompts, useful for automation.
+        # You can add --no-promote if you want to manually route traffic later
+        # Example: gcloud app deploy app.yaml --version=v1 --no-promote --quiet
