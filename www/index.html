@@ -284,7 +284,7 @@
                     pricing_billing: [
                         'Pricing is based on a combination of factors: the amount of data stored (per GB), data retrieval (egress), and the number of operations (PUT, GET, etc.).',
                         'Storage costs vary by access tier (Standard, Infrequent Access, Archive), with archive tiers having the lowest storage cost but high retrieval fees.',
-                        '<i>OCI</i> often has competitive pricing for object storage, especially with its Universal Credits model.',
+                        '<i>OCI</i> often claims lower compute costs, especially for higher OCPU counts, and offers a generous Always Free tier.',
                         '<i>Alibaba Cloud</i> OSS offers competitive pricing with different storage classes and a pay-as-you-go model.'
                     ],
                     common_use_cases: [
@@ -779,434 +779,38 @@
                 }
             },
             {
-                category: 'Analytics & AI/ML',
-                subCategory: 'Data Processing',
-                aws: 'AWS Glue, Amazon EMR',
-                azure: 'Azure Data Factory, Azure Databricks',
-                gcp: 'Cloud Dataflow, Cloud Dataproc',
-                oci: 'OCI Data Flow, OCI Data Integration',
-                aliyun: 'MaxCompute, E-MapReduce (EMR), DataWorks',
+                category: 'Messaging',
+                subCategory: 'Message Queues & Pub/Sub',
+                aws: 'Amazon SQS (Simple Queue Service), Amazon SNS (Simple Notification Service), Amazon Kinesis',
+                azure: 'Azure Service Bus, Azure Event Hubs, Azure Queue Storage',
+                gcp: 'Cloud Pub/Sub, Cloud Tasks',
+                oci: 'OCI Streaming, OCI Queue',
+                aliyun: 'Message Queue for Apache RocketMQ, Message Service (MNS), EventBridge',
                 comparison: {
-                    summary: 'These services provide tools for data processing and ETL (Extract, Transform, Load) tasks, often supporting popular open-source frameworks like Apache Spark and Hadoop.',
+                    summary: 'These services enable asynchronous communication between application components, facilitating decoupled architectures, event-driven systems, and scalable data ingestion.',
                     key_differences: [
-                        '<i>GCP</i> Cloud Dataflow is particularly strong for streaming and batch processing with a unified programming model, making it a flexible tool for real-time analytics.',
-                        '<i>AWS</i> Glue is a fully managed ETL service, while Amazon EMR offers a managed Hadoop framework for big data processing.',
-                        '<i>Azure</i> Data Factory provides a data integration service for building ETL pipelines, and Azure Databricks offers a collaborative, Apache Spark-based platform.',
-                        '<i>OCI</i> Data Flow is a fully managed Apache Spark service for big data processing, and OCI Data Integration provides ETL/ELT capabilities.',
-                        '<i>Alibaba Cloud</i> MaxCompute is a fast and highly scalable data warehousing service. E-MapReduce (EMR) provides a managed Hadoop ecosystem, and DataWorks offers a visual data integration and development environment.'
+                        '<i>GCP</i> Cloud Pub/Sub is a global, real-time messaging service designed for both asynchronous messaging and streaming analytics.',
+                        '<i>AWS</i> offers SQS for message queuing and SNS for publish/subscribe messaging. Kinesis provides real-time data streaming capabilities.',
+                        '<i>Azure</i> Service Bus offers enterprise messaging with queues and topics, while Event Hubs is optimized for high-throughput event streaming. Azure Queue Storage provides simple, durable message queues.',
+                        '<i>OCI</i> Streaming is a Kafka-compatible streaming service for real-time data, and OCI Queue provides simple, durable message queues.',
+                        '<i>Alibaba Cloud</i> Message Queue for Apache RocketMQ offers distributed messaging. Message Service (MNS) provides reliable message queues and topics, and EventBridge enables event-driven architectures.'
                     ],
                     ecosystem_integrations: [
-                        'All of these services integrate with their respective cloud storage and data warehouse services to form a complete data processing pipeline.',
-                        '<i>OCI</i> Data Flow and Data Integration integrate with OCI Object Storage, Autonomous Database, and other OCI data services.',
-                        '<i>Alibaba Cloud</i> data processing services integrate with OSS, AnalyticDB, and other Alibaba Cloud data products.'
+                        'All these services integrate deeply with their respective cloud provider\'s compute (VMs, serverless functions, containers), data processing, and analytics services to build robust, scalable applications.'
                     ],
                     pricing_billing: [
-                        'Pricing is typically based on the duration of compute resources used, with some services billing by data processed.',
-                        'Costs vary depending on the complexity of the data pipeline and the scale of the data being processed.'
+                        'Pricing is typically based on the number of messages processed, the volume of data transferred, and the duration of message retention.',
+                        'Some services may also have charges for provisioned throughput or partitions.'
                     ],
                     common_use_cases: [
-                        'Data transformation and cleaning, real-time streaming analytics, and running big data workloads.'
+                        'Decoupling microservices, asynchronous task processing, real-time data ingestion, event-driven architectures, and fan-out notifications.'
                     ],
                     links: {
-                        aws: 'https://aws.amazon.com/big-data/datalakes-and-analytics/',
-                        azure: 'https://azure.microsoft.com/en-us/solutions/big-data-analytics/',
-                        gcp: 'https://cloud.google.com/solutions/big-data/',
-                        oci: 'https://www.oracle.com/cloud/data-flow/',
-                        aliyun: 'https://www.alibabacloud.com/product/maxcompute'
-                    }
-                }
-            },
-            {
-                category: 'Analytics & AI/ML',
-                subCategory: 'Machine Learning',
-                aws: 'Amazon SageMaker',
-                azure: 'Azure Machine Learning',
-                gcp: 'Vertex AI',
-                oci: 'OCI Data Science, OCI AI Services',
-                aliyun: 'Platform for AI (PAI)',
-                comparison: {
-                    summary: 'These services are managed platforms for building, training, and deploying machine learning models at scale, aimed at both data scientists and developers.',
-                    key_differences: [
-                        '<i>AWS</i> SageMaker has a wide range of pre-built algorithms, notebooks, and tools for every step of the ML workflow, making it a comprehensive platform.',
-                        '<i>GCP</i> Vertex AI is a unified platform for ML development that integrates tools for data labeling, model training, and serving with a focus on ease of use and scalability.',
-                        '<i>Azure</i> Machine Learning is a robust platform that offers a powerful development environment and strong integration with other Azure data and compute services.',
-                        '<i>OCI</i> Data Science provides a managed environment for data scientists to build, train, and deploy ML models, while OCI AI Services offer pre-built AI capabilities like Vision, Language, and Speech.',
-                        '<i>Alibaba Cloud</i> Platform for AI (PAI) offers an end-to-end machine learning platform with various algorithms, data processing, model training, and prediction capabilities.'
-                    ],
-                    ecosystem_integrations: [
-                        'All five platforms offer deep integrations with their respective data storage, compute, and model serving services for a complete ML lifecycle management.'
-                    ],
-                    pricing_billing: [
-                        'Pricing is based on the compute resources used for model training and deployment, as well as the storage consumed by models and datasets.',
-                        'Costs vary significantly depending on the type of compute (e.g., CPU vs. GPU), the duration of training jobs, and the amount of data processed.'
-                    ],
-                    common_use_cases: [
-                        'Building and deploying custom machine learning models, MLOps, and running large-scale training jobs.'
-                    ],
-                    links: {
-                        aws: 'https://aws.amazon.com/sagemaker/',
-                        azure: 'https://azure.microsoft.com/en-us/services/machine-learning/',
-                        gcp: 'https://cloud.google.com/vertex-ai/',
-                        oci: 'https://www.oracle.com/cloud/data-science/',
-                        aliyun: 'https://www.alibabacloud.com/product/pai'
-                    }
-                }
-            },
-            {
-                category: 'Analytics & AI/ML',
-                subCategory: 'Data Lake',
-                aws: 'AWS Lake Formation',
-                azure: 'Azure Data Lake Storage',
-                gcp: 'Cloud Storage (used as data lake)',
-                oci: 'OCI Data Lake (Object Storage, Data Catalog, Data Flow)',
-                aliyun: 'MaxCompute (as data lake core), OSS',
-                comparison: {
-                    summary: 'Data lake services provide a centralized repository for storing large amounts of raw data in its native format, enabling flexible analytics and AI workloads.',
-                    key_differences: [
-                        '<i>AWS</i> Lake Formation and <i>Azure</i> Data Lake Storage are dedicated services for building and managing data lakes with integrated security and governance.',
-                        '<i>GCP</i> uses its general-purpose object storage service, Cloud Storage, as the foundation for data lakes, leveraging its performance and durability as a flexible, scalable data platform.',
-                        '<i>OCI</i> leverages OCI Object Storage as its primary data lake storage, complemented by OCI Data Catalog for metadata management and OCI Data Flow for processing.',
-                        '<i>Alibaba Cloud</i> often uses OSS as the core storage for data lakes, integrated with MaxCompute for processing and DataWorks for governance.'
-                    ],
-                    ecosystem_integrations: [
-                        'These services integrate with data processing engines, data warehouses, and BI tools to provide a complete analytics solution.'
-                    ],
-                    pricing_billing: [
-                        'Pricing is typically based on the amount of data stored (GB/month) and the number of operations performed, similar to object storage services.',
-                        'Additional costs may apply for data transfer and for using other services (e.g., data processing) that integrate with the data lake.'
-                    ],
-                    common_use_cases: [
-                        'Storing vast amounts of raw data, big data analytics, and machine learning.'
-                    ],
-                    links: {
-                        aws: 'https://aws.amazon.com/lake-formation/',
-                        azure: 'https://azure.microsoft.com/en-us/services/storage/data-lake-storage/',
-                        gcp: 'https://cloud.google.com/data-lake-solution/',
-                        oci: 'https://www.oracle.com/cloud/data-lake/',
-                        aliyun: 'https://www.alibabacloud.com/solution/big-data/data-lake'
-                    }
-                }
-            },
-            {
-                category: 'Operations',
-                subCategory: 'Monitoring & Logging',
-                aws: 'Amazon CloudWatch',
-                azure: 'Azure Monitor',
-                gcp: 'Google Cloud Operations Suite',
-                oci: 'OCI Monitoring, OCI Logging, OCI Operations Insights',
-                aliyun: 'CloudMonitor, Simple Log Service (SLS), ARMS',
-                comparison: {
-                    summary: 'These services provide a comprehensive suite of tools for monitoring, logging, and tracing applications and infrastructure. They are crucial for maintaining the health and performance of cloud environments.',
-                    key_differences: [
-                        '<i>AWS</i> CloudWatch offers metrics collection, alarms, and dashboards. It is tightly integrated with all AWS services, providing a single pane of glass for monitoring your infrastructure.',
-                        '<i>Azure</i> Monitor provides comprehensive data collection from applications, OS, and resources, with deep analytics and visualization. It includes features like Application Insights for code-level monitoring and Log Analytics for powerful querying.',
-                        '<i>GCP</i> Cloud Operations Suite (formerly Stackdriver) combines logging, monitoring, tracing, and error reporting into a single, unified platform, making it easy to troubleshoot and debug applications.',
-                        '<i>OCI</i> Monitoring collects metrics, <i>OCI</i> Logging centralizes logs, and <i>OCI</i> Operations Insights provides AI/ML-driven insights for performance and capacity planning, especially for Oracle workloads.',
-                        '<i>Alibaba Cloud</i> CloudMonitor provides comprehensive monitoring for cloud resources. Simple Log Service (SLS) offers one-stop log data management, and Application Real-Time Monitoring Service (ARMS) provides APM capabilities.'
-                    ],
-                    ecosystem_integrations: [
-                        'All of these services are deeply integrated with their respective cloud provider\'s compute, networking, and storage services to provide real-time performance and health insights.'
-                    ],
-                    pricing_billing: [
-                        'Pricing is typically based on the volume of data ingested (logs, metrics) and the number of API calls or custom metrics used.',
-                        'There are often different costs associated with log storage duration and advanced features like custom dashboards or synthetic monitoring.'
-                    ],
-                    common_use_cases: [
-                        'Application performance monitoring (APM), infrastructure monitoring, centralized logging, and alerting on critical events.'
-                    ],
-                    links: {
-                        aws: 'https://aws.amazon.com/cloudwatch/',
-                        azure: 'https://azure.microsoft.com/en-us/services/monitor/',
-                        gcp: 'https://cloud.google.com/operations/',
-                        oci: 'https://www.oracle.com/cloud/observability-management/',
-                        aliyun: 'https://www.alibabacloud.com/product/cloudmonitor'
-                    }
-                }
-            },
-            {
-                category: 'Management Tools',
-                subCategory: 'Infrastructure as Code (IaC)',
-                aws: 'AWS CloudFormation',
-                azure: 'Azure Resource Manager (ARM)',
-                gcp: 'Google Cloud Deployment Manager',
-                oci: 'OCI Resource Manager (Terraform)',
-                aliyun: 'Resource Orchestration Service (ROS)',
-                comparison: {
-                    summary: 'These services allow you to define, deploy, and manage your cloud infrastructure using configuration files as code, enabling automation and consistency.',
-                    key_differences: [
-                        '<i>AWS</i> CloudFormation uses templates to define a collection of AWS resources and provisions them in an orderly and predictable way. It is a declarative service deeply integrated with the AWS ecosystem.',
-                        '<i>Azure</i> Resource Manager (ARM) is a management layer that enables you to create, update, and delete resources in your Azure subscription. ARM templates define your infrastructure in a declarative format.',
-                        '<i>GCP</i> Cloud Deployment Manager provides a similar service for creating and managing GCP resources. It uses YAML and Python or Jinja2 templates to define resource dependencies and configurations.',
-                        '<i>OCI</i> Resource Manager is a managed service that allows you to automate the deployment and management of OCI resources using Terraform configurations.',
-                        '<i>Alibaba Cloud</i> Resource Orchestration Service (ROS) allows you to manage cloud resources using templates, supporting declarative infrastructure deployment.'
-                    ],
-                    ecosystem_integrations: [
-                        'These services are tightly integrated with their respective cloud platforms and are the primary way to automate infrastructure provisioning.'
-                    ],
-                    pricing_billing: [
-                        'All three services are generally included with your cloud account at no additional cost for basic usage. Costs may be incurred for the underlying resources that the templates provision, such as virtual machines or databases.'
-                    ],
-                    common_use_cases: [
-                        'Automating infrastructure deployment, managing environments, and ensuring consistency across cloud resources.'
-                    ],
-                    links: {
-                        aws: 'https://aws.amazon.com/cloudformation/',
-                        azure: 'https://azure.microsoft.com/en-us/services/azure-resource-manager/',
-                        gcp: 'https://cloud.google.com/deployment-manager/',
-                        oci: 'https://www.oracle.com/cloud/resource-manager/',
-                        aliyun: 'https://www.alibabacloud.com/product/ros'
-                    }
-                }
-            },
-            {
-                category: 'Management Tools',
-                subCategory: 'Configuration Management',
-                aws: 'AWS Systems Manager',
-                azure: 'Azure Automation',
-                gcp: 'Google Cloud OS Config',
-                oci: 'OCI OS Management',
-                aliyun: 'Cloud Assistant / CloudOps Orchestration Service',
-                comparison: {
-                    summary: 'These services help you automate the configuration and management of your virtual machines and servers, ensuring consistency and compliance across your fleet.',
-                    key_differences: [
-                        '<i>AWS</i> Systems Manager provides a unified interface for managing operational data and automating tasks across your AWS resources. It includes features like Patch Manager, Run Command, and State Manager.',
-                        '<i>Azure</i> Automation is a cloud-based automation and configuration management service that supports PowerShell and Python runbooks for task automation and Desired State Configuration (DSC) for consistent server configuration.',
-                        '<i>GCP</i> Cloud OS Config automates OS configurations and patches, ensuring that your VM instances are up-to-date and compliant with your policies. It supports both Linux and Windows instances.',
-                        '<i>OCI</i> OS Management helps you manage and automate operating system configurations, patches, and updates for OCI compute instances.',
-                        '<i>Alibaba Cloud</i> Cloud Assistant allows you to execute commands on ECS instances. CloudOps Orchestration Service (OOS) helps automate O&M tasks and manage configuration drift.'
-                    ],
-                    ecosystem_integrations: [
-                        'These services integrate with virtual machines and other compute resources to manage their state and configuration over time.'
-                    ],
-                    pricing_billing: [
-                        'Pricing is based on the number of automation tasks executed, the duration of those tasks, and the number of managed instances.',
-                        'Some features may be included in a free tier, while advanced automation and reporting may incur additional costs.'
-                    ],
-                    common_use_cases: [
-                        'Automating patch management, executing commands on a fleet of servers, and ensuring configuration compliance.'
-                    ],
-                    links: {
-                        aws: 'https://aws.amazon.com/systems-manager/',
-                        azure: 'https://azure.microsoft.com/en-us/services/automation/',
-                        gcp: 'https://cloud.google.com/compute/docs/os-config/',
-                        oci: 'https://www.oracle.com/cloud/os-management/',
-                        aliyun: 'https://www.alibabacloud.com/product/cloud-assistant'
-                    }
-                }
-            },
-            {
-                category: 'Developer Tools',
-                subCategory: 'CI/CD & Build',
-                aws: 'AWS CodeBuild, AWS CodePipeline',
-                azure: 'Azure Pipelines',
-                gcp: 'Cloud Build',
-                oci: 'OCI DevOps',
-                aliyun: 'CloudFlow / CodePipeline',
-                comparison: {
-                    summary: 'These services provide tools for continuous integration and continuous delivery (CI/CD) by automating the process of building, testing, and deploying your code.',
-                    key_differences: [
-                        '<i>AWS</i> CodeBuild is a fully managed build service that compiles source code, runs unit tests, and produces deployable artifacts. It is part of the larger AWS CodePipeline for end-to-end CI/CD.',
-                        '<i>Azure</i> Pipelines is a feature of Azure DevOps that automatically builds and tests code projects and supports a wide variety of languages and application types.',
-                        '<i>GCP</i> Cloud Build is a serverless CI/CD platform that executes your builds on GCP. It can import code from various repositories and build a variety of artifacts, including container images.',
-                        '<i>OCI</i> DevOps is a complete CI/CD platform that helps automate development and deployment workflows on OCI.',
-                        '<i>Alibaba Cloud</i> CloudFlow (enterprise-level continuous delivery) and CodePipeline (part of Alibaba Cloud DevOps) offer managed services for building, testing, and deploying applications.'
-                    ],
-                    ecosystem_integrations: [
-                        'These services integrate with source code repositories like GitHub and Bitbucket, as well as with their respective cloud deployment and container services.'
-                    ],
-                    pricing_billing: [
-                        'Pricing is typically based on the compute time consumed by build jobs, often billed in minutes.',
-                        'Costs vary based on the machine type used for the build and the number of parallel builds running.'
-                    ],
-                    common_use_cases: [
-                        'Automating the build and test process for applications, continuous integration, and creating a CI/CD pipeline.'
-                    ],
-                    links: {
-                        aws: 'https://aws.amazon.com/codepipeline/',
-                        azure: 'https://azure.microsoft.com/en-us/services/devops/pipelines/',
-                        gcp: 'https://cloud.google.com/cloud-build/',
-                        oci: 'https://www.oracle.com/cloud/devops/',
-                        aliyun: 'https://www.alibabacloud.com/product/devops'
-                    }
-                }
-            },
-            {
-                category: 'Developer Tools',
-                subCategory: 'Artifact Registries',
-                aws: 'Amazon ECR (Elastic Container Registry)',
-                azure: 'Azure Container Registry',
-                gcp: 'Google Artifact Registry',
-                oci: 'OCI Container Registry (OCIR)',
-                aliyun: 'Container Registry',
-                comparison: {
-                    summary: 'These services provide a secure, private registry for storing and managing your container images and other software artifacts, enabling a streamlined development workflow.',
-                    key_differences: [
-                        '<i>AWS</i> ECR is a fully managed Docker container registry that is integrated with AWS services like ECS and EKS, providing a simple way to store and manage images for your containerized applications.',
-                        '<i>Azure</i> Container Registry is a private, managed Docker registry that is deeply integrated with Azure\'s container platforms and developer tools.',
-                        '<i>GCP</i> Artifact Registry is a single, unified registry for storing both container images and other package formats (e.g., Maven, npm), replacing the older Container Registry service and providing a more flexible solution.',
-                        '<i>OCI</i> Container Registry (OCIR) is a highly available and scalable Docker V2 compliant registry for storing and managing container images.',
-                        '<i>Alibaba Cloud</i> Container Registry provides a secure and reliable service for managing Docker images, compatible with Docker Hub and integrated with other Alibaba Cloud container services.'
-                    ],
-                    ecosystem_integrations: [
-                        'These services are essential for containerized workflows and integrate with their respective CI/CD and orchestration services.'
-                    ],
-                    pricing_billing: [
-                        'Pricing is based on the amount of storage consumed by your artifacts (GB/month) and the amount of data transferred when pulling or pushing images.',
-                        'Costs may vary based on the tier of service, with some offering a free tier for a limited amount of storage.'
-                    ],
-                    common_use_cases: [
-                        'Storing container images, managing software packages, and securing the supply chain for applications.'
-                    ],
-                    links: {
-                        aws: 'https://aws.amazon.com/ecr/',
-                        azure: 'https://azure.microsoft.com/en-us/services/container-registry/',
-                        gcp: 'https://cloud.google.com/artifact-registry/',
-                        oci: 'https://www.oracle.com/cloud/container-registry/',
-                        aliyun: 'https://www.alibabacloud.com/product/container-registry'
-                    }
-                }
-            },
-            {
-                category: 'Security',
-                subCategory: 'WAF & DDoS Protection',
-                aws: 'AWS WAF & AWS Shield',
-                azure: 'Azure Application Gateway (with WAF) & Azure DDoS Protection',
-                gcp: 'Google Cloud Armor',
-                oci: 'OCI Web Application Firewall (WAF), OCI DDoS Protection',
-                aliyun: 'WAF, Anti-DDoS',
-                comparison: {
-                    summary: 'These services protect web applications and network resources from common exploits and denial-of-service (DDoS) attacks, ensuring high availability and security.',
-                    key_differences: [
-                        '<i>AWS</i> WAF allows you to create custom rules to filter web traffic, while AWS Shield provides managed DDoS protection, with a standard tier included for all AWS customers.',
-                        '<i>Azure</i> Application Gateway provides a web application firewall (WAF) to protect against web attacks. Azure DDoS Protection offers enhanced mitigation capabilities for network-layer attacks.',
-                        '<i>GCP</i> Cloud Armor is a security service that provides WAF and DDoS protection to defend applications running on Google Cloud, leveraging Google’s global network.',
-                        '<i>OCI</i> WAF protects web applications from common cyber threats, and OCI provides built-in DDoS protection for all services.',
-                        '<i>Alibaba Cloud</i> WAF protects web applications from common attacks, and Anti-DDoS provides robust protection against various DDoS attacks.'
-                    ],
-                    ecosystem_integrations: [
-                        'These services integrate with load balancers, CDNs, and other networking services to protect incoming traffic.'
-                    ],
-                    pricing_billing: [
-                        'Pricing is typically based on the number of web requests processed and the number of rules configured for WAF services.',
-                        'DDoS protection services are often tiered, with a standard tier included and premium tiers available for more advanced protection and cost-based mitigation.'
-                    ],
-                    common_use_cases: [
-                        'Protecting public-facing web applications, mitigating bot traffic, and defending against network attacks.'
-                    ],
-                    links: {
-                        aws: 'https://aws.amazon.com/waf/',
-                        azure: 'https://azure.microsoft.com/en-us/services/web-application-firewall/',
-                        gcp: 'https://cloud.google.com/armor/',
-                        oci: 'https://www.oracle.com/cloud/security/web-application-firewall/',
-                        aliyun: 'https://www.alibabacloud.com/product/waf'
-                    }
-                }
-            },
-            {
-                category: 'Security',
-                subCategory: 'Key Management',
-                aws: 'AWS KMS (Key Management Service)',
-                azure: 'Azure Key Vault',
-                gcp: 'Google Cloud KMS (Key Management Service)',
-                oci: 'OCI Vault',
-                aliyun: 'KMS (Key Management Service)',
-                comparison: {
-                    summary: 'These services provide a centralized and secure way to manage cryptographic keys used to encrypt data and other cloud resources, ensuring data protection and compliance.',
-                    key_differences: [
-                        'All three services provide a managed, highly available way to create, store, and manage encryption keys.',
-                        'They are all integrated with hardware security modules (HSMs) to protect your keys.',
-                        'The services are tightly integrated with other cloud services on their respective platforms, making it easy to encrypt data at rest and in transit.',
-                        '<i>OCI</i> Vault provides a centralized service for managing encryption keys and secrets, backed by FIPS 140-2 Level 3 certified HSMs.',
-                        '<i>Alibaba Cloud</i> KMS provides a secure and compliant service for managing encryption keys, integrating with various Alibaba Cloud services for data encryption.'
-                    ],
-                    ecosystem_integrations: [
-                        'These services are essential for a variety of services, including database encryption, object storage encryption, and virtual machine encryption.'
-                    ],
-                    pricing_billing: [
-                        'Pricing is typically based on the number of keys managed and the number of API calls made to the service for cryptographic operations.',
-                        'There may be additional costs for using custom key material or advanced features like HSM-backed keys.'
-                    ],
-                    common_use_cases: [
-                        'Centralized management of encryption keys, secrets management, and digital certificate management.'
-                    ],
-                    links: {
-                        aws: 'https://aws.amazon.com/kms/',
-                        azure: 'https://azure.microsoft.com/en-us/services/key-vault/',
-                        gcp: 'https://cloud.google.com/kms/',
-                        oci: 'https://www.oracle.com/cloud/security/vault/',
-                        aliyun: 'https://www.alibabacloud.com/product/kms'
-                    }
-                }
-            },
-            {
-                category: 'Security',
-                subCategory: 'Compliance & Governance',
-                aws: 'AWS Config, AWS Audit Manager',
-                azure: 'Azure Policy, Microsoft Purview',
-                gcp: 'Google Cloud Security Command Center',
-                oci: 'OCI Cloud Guard, OCI Security Zones',
-                aliyun: 'Cloud Guard, Security Center',
-                comparison: {
-                    summary: 'These services help you automate compliance checks, audit your cloud environment, and enforce security policies to meet industry standards and internal governance requirements.',
-                    key_differences: [
-                        '<i>AWS</i> Config tracks resource changes and a desired configuration. AWS Audit Manager simplifies the process of auditing your cloud usage for compliance.',
-                        '<i>Azure</i> Policy allows you to create, assign, and manage policy definitions to enforce resource governance. Microsoft Purview provides a comprehensive view of your data estate to manage governance.',
-                        '<i>GCP</i> Cloud Security Command Center is a centralized platform for security and risk management, helping you to find, assess, and fix security vulnerabilities.',
-                        '<i>OCI</i> Cloud Guard continuously monitors and enforces security posture, while OCI Security Zones enforce security best practices for resource creation and modification.',
-                        '<i>Alibaba Cloud</i> Cloud Guard provides continuous security posture management and threat detection. Security Center offers a unified security management platform for cloud assets.'
-                    ],
-                    ecosystem_integrations: [
-                        'These services are integrated with IAM and other security tools to provide a complete picture of your security and compliance posture.'
-                    ],
-                    pricing_billing: [
-                        'Pricing is typically based on the number of resources evaluated, the number of API calls, and the amount of data scanned for policy violations.',
-                        'Some services may offer a free tier for basic usage, with advanced features incurring additional costs.'
-                    ],
-                    common_use_cases: [
-                        'Automating compliance reporting, enforcing security best practices, and auditing resource configurations.'
-                    ],
-                    links: {
-                        aws: 'https://aws.amazon.com/compliance/',
-                        azure: 'https://azure.microsoft.com/en-us/solutions/security-compliance/',
-                        gcp: 'https://cloud.google.com/security-command-center/',
-                        oci: 'https://www.oracle.com/cloud/security/cloud-guard/',
-                        aliyun: 'https://www.alibabacloud.com/product/cloud-guard'
-                    }
-                }
-            },
-            {
-                category: 'Security',
-                subCategory: 'Secrets Management',
-                aws: 'AWS Secrets Manager',
-                azure: 'Azure Key Vault',
-                gcp: 'Google Cloud Secret Manager',
-                oci: 'OCI Vault (Secrets Management)',
-                aliyun: 'KMS (Key Management Service) / Secrets Manager',
-                comparison: {
-                    summary: 'These services provide a secure way to store, manage, and rotate sensitive information like database credentials, API keys, and other secrets, reducing the risk of hard-coding them in your applications.',
-                    key_differences: [
-                        '<i>AWS</i> Secrets Manager allows you to easily rotate credentials for supported databases, simplifying security management.',
-                        '<i>Azure</i> Key Vault provides a secure storage for keys, secrets, and certificates. Secrets are versioned and can be retrieved using a REST API.',
-                        '<i>GCP</i> Cloud Secret Manager is a fully managed service that provides a central, secure location to store and manage secrets, with features like automatic rotation and access control.',
-                        '<i>OCI</i> Vault provides secure storage and management for secrets, including automatic rotation for database credentials.',
-                        '<i>Alibaba Cloud</i> KMS also offers secrets management capabilities, allowing secure storage and management of sensitive data.'
-                    ],
-                    ecosystem_integrations: [
-                        'These services are used by applications running on virtual machines, containers, and serverless functions to securely retrieve credentials and other sensitive information at runtime.'
-                    ],
-                    pricing_billing: [
-                        'Pricing is based on the number of secrets stored and the number of access operations performed on those secrets.',
-                        'Costs are generally low but can scale with a large number of secrets and high-frequency access patterns.'
-                    ],
-                    common_use_cases: [
-                        'Storing database credentials, API keys, and other application secrets securely.'
-                    ],
-                    links: {
-                        aws: 'https://aws.amazon.com/secrets-manager/',
-                        azure: 'https://azure.microsoft.com/en-us/services/key-vault/',
-                        gcp: 'https://cloud.google.com/secret-manager/',
-                        oci: 'https://www.oracle.com/cloud/security/vault/',
-                        aliyun: 'https://www.alibabacloud.com/product/kms'
+                        aws: 'https://aws.amazon.com/messaging/',
+                        azure: 'https://azure.microsoft.com/en-us/services/service-bus/',
+                        gcp: 'https://cloud.google.com/pubsub/',
+                        oci: 'https://www.oracle.com/cloud/application-development/messaging/',
+                        aliyun: 'https://www.alibabacloud.com/product/mq'
                     }
                 }
             },
@@ -1249,7 +853,7 @@
                     service.azure.toLowerCase().includes(searchTerm) ||
                     service.gcp.toLowerCase().includes(searchTerm) ||
                     (service.oci && service.oci.toLowerCase().includes(searchTerm)) ||
-                    (service.aliyun && service.aliyun.toLowerCase().includes(searchTerm)); // Include Alibaba Cloud in search
+                    (service.aliyun && service.aliyun.toLowerCase().includes(searchTerm));
                 return matchesCategory && matchesSearch;
             });
 
