@@ -25,8 +25,9 @@ jobs:
           project_id: ${{ secrets.GCP_PROJECT_ID }} # Replace with your actual GCP Project ID
 
       - name: Deploy to App Engine
-        run: gcloud app deploy app.yaml --version=v1 --quiet # Deploy your app.yaml
-        # --version: Optional. Specifies a version ID. If omitted, one is generated.
+        run: 
+          # Generate a unique version ID using the GitHub run ID and timestamp
+          VERSION_ID="gh-${{ github.run_id }}-${{ github.run_number }}"
+          gcloud app deploy app.yaml --version=$VERSION_ID --quiet # Deploy your app.yaml
         # --quiet: Optional. Suppresses prompts, useful for automation.
         # You can add --no-promote if you want to manually route traffic later
-        # Example: gcloud app deploy app.yaml --version=v1 --no-promote --quiet
