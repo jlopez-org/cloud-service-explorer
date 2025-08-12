@@ -26,8 +26,6 @@ jobs:
 
       - name: Deploy to App Engine
         run: 
-          # Generate a unique version ID using the GitHub run ID and timestamp
-          VERSION_ID="gh-${{ github.run_id }}-${{ github.run_number }}"
-          gcloud app deploy app.yaml --version=$VERSION_ID --quiet # Deploy your app.yaml
+          gcloud app deploy app.yaml --quiet # Deploy your app.yaml
         # --quiet: Optional. Suppresses prompts, useful for automation.
         # You can add --no-promote if you want to manually route traffic later
